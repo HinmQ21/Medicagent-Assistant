@@ -78,7 +78,6 @@ Nhiều mô hình thị giác máy tính đã được tích hợp để hỗ tr
 ```bash
 cd frontend
 npm install
-# Create .env
 npm run dev
 ```
 
@@ -90,5 +89,5 @@ cd backend
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
-uvicorn app:app --reload
+python app.py
 ```
