@@ -10,8 +10,9 @@ class WebSearchAgent:
     """
     
     def __init__(self, config):
-        self.tavily_search_agent = TavilySearchAgent()
-        
+        self.config = config
+        self.tavily_search_agent = TavilySearchAgent(config.web_search if hasattr(config, 'web_search') else None)
+
         # self.pubmed_search_agent = PubmedSearchAgent()
         # self.pubmed_api_url = config.pubmed_api_url
     

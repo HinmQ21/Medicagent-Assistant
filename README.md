@@ -23,7 +23,7 @@ Trợ lý y tế hiện đại sử dụng kiến trúc đa tác tử.
 | 🔹 Agent Orchestration | LangGraph |
 | 🔹 Document Parsing | Docling |
 | 🔹 Knowledge Storage | Qdrant Vector Database |
-| 🔹 Conversation Model | Gemini 2.0 Flash Lite (Google) |
+| 🔹 Conversation Model | Gemini (Google) |
 | 🔹 Medical Imaging | Computer Vision Models:<br>• Brain Tumor: Object Detection (PyTorch)<br>• Chest X-ray: Image Classification (PyTorch)<br>• Skin Lesion: Semantic Segmentation (PyTorch) |
 | 🔹 Information Searching | Tavily API |
 | 🔹 Guardrails | LangChain |

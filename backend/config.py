@@ -43,6 +43,9 @@ class WebSearchConfig:
             temperature=0.3  # Slightly creative but factual
         )
         self.context_limit = 20     # include last 20 messsages (10 Q&A pairs) in history
+        self.include_sources = True  # Show source citations in web search responses
+        self.max_results = 5  # Maximum number of search results to retrieve
+        self.content_max_length = 500  # Maximum length of content snippet per result
 
 class RAGConfig:
     def __init__(self):

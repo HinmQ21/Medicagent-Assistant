@@ -45,30 +45,145 @@ class WebSearchProcessor:
 
         return prompt
     
+    def _build_enhanced_response_prompt(self, query: str, web_results: str) -> str:
+        """
+        Build an enhanced prompt for generating clean response with proper source citations.
+
+        Args:
+            query: User query
+            web_results: Raw web search results
+
+        Returns:
+            Enhanced prompt string
+        """
+        prompt = f"""You are an AI medical assistant specialized in providing accurate, evidence-based medical information.
+
+Your task is to analyze the web search results and provide a comprehensive, well-structured response that includes proper source citations.
+
+CRITICAL INSTRUCTIONS:
+1. Analyze the provided web search results carefully
+2. Synthesize the information into a coherent, helpful response
+3. Ensure medical accuracy and reliability - only use information from credible sources
+4. ALWAYS include source citations for every major claim or piece of information
+5. Prioritize information from reputable medical sources (medical journals, health organizations, hospitals, government health agencies, etc.)
+6. If conflicting information exists, acknowledge it and explain the differences
+7. Use clear, accessible language while maintaining medical accuracy
+8. Structure your response with clear sections if the topic is complex
+9. Be transparent about limitations and recommend consulting healthcare professionals when appropriate
+
+MANDATORY RESPONSE FORMAT:
+1. **Câu trả lời trực tiếp**: Start with a clear, direct answer to the user's question
+2. **Giải thích chi tiết**: Provide comprehensive information with supporting evidence
+3. **Lưu ý quan trọng**: Include relevant context, warnings, or additional considerations
+4. **Nguồn tham khảo**: End with a "##### Nguồn:" section listing all referenced sources
+
+CITATION FORMAT:
+- Use inline citations like [1], [2], etc. throughout your response
+- At the end, list sources as:
+##### Nguồn:
+[1] Title - URL
+[2] Title - URL
+etc.
+
+QUALITY STANDARDS:
+- Only cite information that directly appears in the search results
+- Distinguish between different types of sources (research studies, health organizations, news articles)
+- If information is limited or unclear, state this explicitly
+- Always recommend consulting healthcare professionals for personalized medical advice
+
+IMPORTANT: Respond ONLY with the medical information. Do not include any meta-commentary like "The response is appropriate" or "ORIGINAL USER QUERY" or "CHATBOT RESPONSE" or "Here is the response" or any evaluation text. Start directly with your medical response following the format above.
+
+USER QUERY: {query}
+
+WEB SEARCH RESULTS:
+{web_results}
+
+Please provide a comprehensive response following the mandatory format above:"""
+
+        return prompt
+
+    def _post_process_response(self, response_content: str) -> str:
+        """
+        Post-process the LLM response to ensure proper formatting and remove unnecessary text.
+
+        Args:
+            response_content: Raw response from LLM
+
+        Returns:
+            Processed response with improved formatting
+        """
+        # Remove common unwanted prefixes/suffixes
+        unwanted_phrases = [
+            "The response is appropriate.",
+            "ORIGINAL USER QUERY:",
+            "CHATBOT RESPONSE:",
+            "Here is the response:",
+            "Response:",
+            "The answer is:",
+            "Based on the search results:",
+            "Here's the information:",
+            "According to the search results:",
+            "The search results show:",
+        ]
+
+        # Clean the response
+        cleaned_response = response_content.strip()
+
+        # Remove unwanted phrases from beginning
+        for phrase in unwanted_phrases:
+            if cleaned_response.startswith(phrase):
+                cleaned_response = cleaned_response[len(phrase):].strip()
+
+        # Remove unwanted phrases from anywhere in text
+        for phrase in unwanted_phrases:
+            cleaned_response = cleaned_response.replace(phrase, "").strip()
+
+        # Remove multiple consecutive newlines
+        import re
+        cleaned_response = re.sub(r'\n\s*\n\s*\n+', '\n\n', cleaned_response)
+
+        # Ensure there's a sources section if it's missing
+        if "##### Nguồn:" not in cleaned_response and "Nguồn:" not in cleaned_response and "##### Sources:" not in cleaned_response:
+            # Try to extract URLs from the response and add a basic sources section
+            urls = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', cleaned_response)
+            if urls:
+                cleaned_response += "\n\n##### Nguồn:\n"
+                for i, url in enumerate(set(urls), 1):
+                    cleaned_response += f"[{i}] {url}\n"
+
+        # Add disclaimer if not present
+        disclaimer = "\n\n**Lưu ý**: Thông tin này chỉ mang tính chất giáo dục và không thể thay thế lời khuyên y tế chuyên nghiệp. Vui lòng tham khảo ý kiến bác sĩ để được tư vấn y tế phù hợp."
+
+        if "lưu ý" not in cleaned_response.lower() and "tham khảo" not in cleaned_response.lower() and "disclaimer" not in cleaned_response.lower():
+            cleaned_response += disclaimer
+
+        return cleaned_response
+
     def process_web_results(self, query: str, chat_history: Optional[List[Dict[str, str]]] = None) -> str:
         """
-        Fetches web search results, processes them using LLM, and returns a user-friendly response.
+        Fetches web search results, processes them using LLM, and returns a clean user-friendly response with citations.
         """
         # print(f"[WebSearchProcessor] Fetching web search results for: {query}")
         web_search_query_prompt = self._build_prompt_for_web_search(query=query, chat_history=chat_history)
         # print("Web Search Query Prompt:", web_search_query_prompt)
         web_search_query = self.llm.invoke(web_search_query_prompt)
         # print("Web Search Query:", web_search_query)
-        
+
         # Retrieve web search results
         web_results = self.web_search_agent.search(web_search_query.content)
 
         # print(f"[WebSearchProcessor] Fetched results: {web_results}")
-        
-        # Construct prompt to LLM for processing the results
-        llm_prompt = (
-            "You are an AI assistant specialized in medical information. Below are web search results "
-            "retrieved for a user query. Summarize and generate a helpful, concise response. "
-            "Use reliable sources only and ensure medical accuracy.\n\n"
-            f"Query: {query}\n\nWeb Search Results:\n{web_results}\n\nResponse:"
-        )
-        
+
+        # Construct enhanced prompt for better response generation
+        llm_prompt = self._build_enhanced_response_prompt(query, web_results)
+
         # Invoke the LLM to process the results
         response = self.llm.invoke(llm_prompt)
-        
+
+        # Post-process the response to ensure proper formatting and remove unwanted text
+        processed_response = self._post_process_response(response.content)
+
+        # Create a response object with the processed content
+        response.content = processed_response
+
         return response
