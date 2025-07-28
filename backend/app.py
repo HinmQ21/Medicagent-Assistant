@@ -80,7 +80,7 @@ class QueryRequest(BaseModel):
 class SpeechRequest(BaseModel):
     text: str
     voice_id: Optional[str] = None
-    language: Optional[str] = "vi-VN"  # Default to Vietnamese
+    language: Optional[str] = "en-US"  # Default to English
 
 @app.get("/health")
 def health_check():
@@ -238,7 +238,7 @@ def validate_medical_output(
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/transcribe")
-async def transcribe_audio(audio: UploadFile = File(...), language: str = Form("vi-VN")):
+async def transcribe_audio(audio: UploadFile = File(...), language: str = Form("en-US")):
     """Endpoint to transcribe speech using Azure Speech-to-Text API"""
     if not audio.filename:
         return JSONResponse(
@@ -285,7 +285,7 @@ async def transcribe_audio(audio: UploadFile = File(...), language: str = Form("
                 "Content-Type": "audio/mpeg"
             }
             
-            # Use the provided language or default to Vietnamese
+            # Use the provided language or default to English
             params = {
                 "language": language,
                 "format": "detailed"
@@ -341,7 +341,7 @@ async def generate_speech(request: SpeechRequest):
     """Endpoint to generate speech using Azure Text-to-Speech API"""
     try:
         text = request.text
-        language = request.language or "vi-VN"  # Default to Vietnamese if not provided
+        language = request.language or "en-US"  # Default to English if not provided
         
         if not text:
             return JSONResponse(

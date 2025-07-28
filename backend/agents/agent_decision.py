@@ -140,7 +140,7 @@ def create_agent_graph():
             input_text = current_input.get("text", "")
         
         # Detect language of user input
-        input_lang = 'vi'  # Default to Vietnamese
+        input_lang = 'en'  # Default to English
         if input_text:
             input_lang = detect_language(input_text)
         
@@ -250,7 +250,7 @@ def create_agent_graph():
         current_input = state["current_input"]
         
         # Get input language from state
-        input_lang = state.get("input_lang", "vi")
+        input_lang = state.get("input_lang", "en")
         
         # Get query text
         input_text = ""
@@ -354,7 +354,7 @@ def create_agent_graph():
         rag_context_limit = config.rag.context_limit
 
         # Get input language from state
-        input_lang = state.get("input_lang", "vi")
+        input_lang = state.get("input_lang", "en")
 
         recent_context = ""
         for msg in messages[-rag_context_limit:]:# limit controlled from config
@@ -433,7 +433,7 @@ def create_agent_graph():
         web_search_context_limit = config.web_search.context_limit
 
         # Get input language from state
-        input_lang = state.get("input_lang", "vi")
+        input_lang = state.get("input_lang", "en")
 
         recent_context = ""
         for msg in messages[-web_search_context_limit:]: # limit controlled from config
@@ -488,7 +488,7 @@ def create_agent_graph():
         image_path = current_input.get("image", None)
 
         # Get input language from state
-        input_lang = state.get("input_lang", "vi")
+        input_lang = state.get("input_lang", "en")
 
         if not image_path:
             response_text = "No image was provided for analysis. Please upload a brain MRI image."
@@ -583,7 +583,7 @@ def create_agent_graph():
         print(f"Selected agent: CHEST_XRAY_AGENT")
 
         # Get input language from state
-        input_lang = state.get("input_lang", "vi")
+        input_lang = state.get("input_lang", "en")
 
         # classify chest x-ray into covid or normal
         predicted_class = AgentConfig.image_analyzer.classify_chest_xray(image_path)
@@ -617,7 +617,7 @@ def create_agent_graph():
         print(f"Selected agent: SKIN_LESION_AGENT")
 
         # Get input language from state
-        input_lang = state.get("input_lang", "vi")
+        input_lang = state.get("input_lang", "en")
 
         # classify chest x-ray into covid or normal
         predicted_mask = AgentConfig.image_analyzer.segment_skin_lesion(image_path)
@@ -651,7 +651,7 @@ def create_agent_graph():
         print(f"Selected agent: HUMAN_VALIDATION")
         
         # Get input language from state
-        input_lang = state.get("input_lang", "vi")
+        input_lang = state.get("input_lang", "en")
         
         # Get the original output content
         output_content = state['output'].content
@@ -685,7 +685,7 @@ def create_agent_graph():
         output_text = output if isinstance(output, str) else output.content
         
         # Get input language from state
-        input_lang = state.get("input_lang", "vi")
+        input_lang = state.get("input_lang", "en")
         
         # If the last message was a human validation message
         if "Human Validation Required" in output_text:
@@ -829,7 +829,7 @@ def init_agent_state() -> AgentState:
         "retrieval_confidence": 0.0,
         "bypass_routing": False,
         "insufficient_info": False,
-        "input_lang": "vi"
+        "input_lang": "en"
     }
 
 
@@ -843,7 +843,7 @@ def detect_language(text: str) -> str:
     Returns:
         Language code (e.g., 'en', 'vi', etc.)
     """
-    detection_prompt = f"""Please detect the language of the following text and respond with only the ISO 639-1 language code (e.g., 'en' for English, 'vi' for Vietnamese, etc.):
+    detection_prompt = f"""Please detect the language of the following text and respond with only the ISO 639-1 language code (e.g., 'en' for English, 'es' for Spanish, etc.):
 
     Text: {text}
 
@@ -865,7 +865,9 @@ def translate_text(text: str, target_lang: str) -> str:
     """
     lang_names = {
         'en': 'English',
-        'vi': 'Vietnamese',
+        'es': 'Spanish',
+        'fr': 'French',
+        'de': 'German',
         # Add more languages as needed
     }
     
@@ -915,7 +917,7 @@ def process_query(query: Union[str, Dict], conversation_history: List[BaseMessag
         query_text = query
 
     # Detect input language if there's text, otherwise default to English
-    input_lang = 'vi'  # Default to Vietnamese
+    input_lang = 'en'  # Default to English
     if query_text:
         detected_lang = detect_language(query_text)
         # Only use detected language if not empty

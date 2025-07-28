@@ -17,7 +17,7 @@ interface MessageProps {
 export function Message({ message, onValidation }: MessageProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [language, setLanguage] = useState<string>("vi-VN"); // Default to Vietnamese
+  const [language, setLanguage] = useState<string>("en-US"); // Default to English
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [validationComments, setValidationComments] = useState('');
 
@@ -73,9 +73,9 @@ export function Message({ message, onValidation }: MessageProps) {
       // Additional check to prevent lone punctuation
       if (cleanedText.trim().length < 2 || /^[,.?!;:]$/.test(cleanedText.trim())) {
         console.warn("Text too short or just punctuation, adding default message");
-        cleanedText = language === "vi-VN" 
-          ? "Xin lỗi, không thể phát âm đoạn văn bản này." 
-          : "Sorry, this text cannot be spoken.";
+        cleanedText = language === "en-US"
+          ? "Sorry, this text cannot be spoken."
+          : "Xin lỗi, không thể phát âm đoạn văn bản này.";
       }
       
       try {
@@ -117,9 +117,9 @@ export function Message({ message, onValidation }: MessageProps) {
       } catch (error) {
         console.error('Failed to generate or play speech:', error);
         // Show a user-friendly error message
-        alert(language === "vi-VN" 
-          ? "Không thể phát âm đoạn văn bản này." 
-          : "Unable to speak this text.");
+        alert(language === "en-US"
+          ? "Unable to speak this text."
+          : "Không thể phát âm đoạn văn bản này.");
       }
     } catch (error) {
       console.error('Failed to generate speech:', error);
@@ -154,7 +154,7 @@ export function Message({ message, onValidation }: MessageProps) {
   };
 
   const toggleLanguage = () => {
-    setLanguage(prev => prev === "vi-VN" ? "en-US" : "vi-VN");
+    setLanguage(prev => prev === "en-US" ? "vi-VN" : "en-US");
   };
 
   // Configure marked options for better table rendering
@@ -302,11 +302,11 @@ export function Message({ message, onValidation }: MessageProps) {
               variant="outline"
               size="sm"
               onClick={toggleLanguage}
-              title={language === "vi-VN" ? "Currently Vietnamese, click for English" : "Currently English, click for Vietnamese"}
+              title={language === "en-US" ? "Currently English, click for Vietnamese" : "Currently Vietnamese, click for English"}
               className="ml-1"
             >
               <Globe className="h-4 w-4" />
-              <span className="ml-1 text-xs">{language === "vi-VN" ? "VI" : "EN"}</span>
+              <span className="ml-1 text-xs">{language === "en-US" ? "EN" : "VI"}</span>
             </Button>
           </div>
         )}

@@ -65,7 +65,7 @@ export async function sendValidation(validation: string, comments: string): Prom
   return response.json();
 }
 
-export async function transcribeAudio(audio: Blob, language: string = "vi-VN"): Promise<{ transcript: string }> {
+export async function transcribeAudio(audio: Blob, language: string = "en-US"): Promise<{ transcript: string }> {
   console.log(`Preparing to transcribe audio: ${audio.size} bytes, language: ${language}`);
   
   const formData = new FormData();

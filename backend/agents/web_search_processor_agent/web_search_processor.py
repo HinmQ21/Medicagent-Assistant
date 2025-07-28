@@ -72,15 +72,15 @@ CRITICAL INSTRUCTIONS:
 9. Be transparent about limitations and recommend consulting healthcare professionals when appropriate
 
 MANDATORY RESPONSE FORMAT:
-1. **Câu trả lời trực tiếp**: Start with a clear, direct answer to the user's question
-2. **Giải thích chi tiết**: Provide comprehensive information with supporting evidence
-3. **Lưu ý quan trọng**: Include relevant context, warnings, or additional considerations
-4. **Nguồn tham khảo**: End with a "##### Nguồn:" section listing all referenced sources
+1. **Direct Answer**: Start with a clear, direct answer to the user's question
+2. **Detailed Explanation**: Provide comprehensive information with supporting evidence
+3. **Important Notes**: Include relevant context, warnings, or additional considerations
+4. **References**: End with a "##### Sources:" section listing all referenced sources
 
 CITATION FORMAT:
 - Use inline citations like [1], [2], etc. throughout your response
 - At the end, list sources as:
-##### Nguồn:
+##### Sources:
 [1] Title - URL
 [2] Title - URL
 etc.
@@ -91,7 +91,14 @@ QUALITY STANDARDS:
 - If information is limited or unclear, state this explicitly
 - Always recommend consulting healthcare professionals for personalized medical advice
 
-IMPORTANT: Respond ONLY with the medical information. Do not include any meta-commentary like "The response is appropriate" or "ORIGINAL USER QUERY" or "CHATBOT RESPONSE" or "Here is the response" or any evaluation text. Start directly with your medical response following the format above.
+CRITICAL: Respond ONLY with the medical information in the exact format specified above. Do NOT include:
+- Any meta-commentary like "The response is appropriate"
+- Query repetition like "ORIGINAL USER QUERY:" or "Tell me about..."
+- Response prefixes like "CHATBOT RESPONSE:", "Here is the response:", "Here's the information:"
+- Any evaluation or commentary text
+- Any introductory phrases
+
+Start your response IMMEDIATELY with "**Direct Answer:**" followed by the actual medical content.
 
 USER QUERY: {query}
 
@@ -112,6 +119,8 @@ Please provide a comprehensive response following the mandatory format above:"""
         Returns:
             Processed response with improved formatting
         """
+        import re
+
         # Remove common unwanted prefixes/suffixes
         unwanted_phrases = [
             "The response is appropriate.",
@@ -124,37 +133,63 @@ Please provide a comprehensive response following the mandatory format above:"""
             "Here's the information:",
             "According to the search results:",
             "The search results show:",
+            "Here is a comprehensive response:",
+            "Here's a comprehensive response:",
+            "Please find the response below:",
+            "The following is the response:",
         ]
 
         # Clean the response
         cleaned_response = response_content.strip()
 
-        # Remove unwanted phrases from beginning
+        # Remove unwanted phrases from beginning (case insensitive)
         for phrase in unwanted_phrases:
-            if cleaned_response.startswith(phrase):
-                cleaned_response = cleaned_response[len(phrase):].strip()
+            pattern = re.compile(re.escape(phrase), re.IGNORECASE)
+            if pattern.match(cleaned_response):
+                cleaned_response = pattern.sub("", cleaned_response, count=1).strip()
 
-        # Remove unwanted phrases from anywhere in text
+        # Remove unwanted phrases from anywhere in text (case insensitive)
         for phrase in unwanted_phrases:
-            cleaned_response = cleaned_response.replace(phrase, "").strip()
+            pattern = re.compile(re.escape(phrase), re.IGNORECASE)
+            cleaned_response = pattern.sub("", cleaned_response).strip()
+
+        # Remove any lines that contain only meta-text patterns
+        lines = cleaned_response.split('\n')
+        filtered_lines = []
+        for line in lines:
+            line_stripped = line.strip()
+            # Skip lines that are purely meta-commentary
+            if (line_stripped.startswith("ORIGINAL USER QUERY:") or
+                line_stripped.startswith("CHATBOT RESPONSE:") or
+                line_stripped == "The response is appropriate." or
+                line_stripped.startswith("Here is") or
+                line_stripped.startswith("Here's") or
+                line_stripped.startswith("Please find") or
+                line_stripped.startswith("The following is")):
+                continue
+            filtered_lines.append(line)
+
+        cleaned_response = '\n'.join(filtered_lines).strip()
 
         # Remove multiple consecutive newlines
-        import re
         cleaned_response = re.sub(r'\n\s*\n\s*\n+', '\n\n', cleaned_response)
 
+        # Remove any remaining empty lines at the beginning
+        cleaned_response = cleaned_response.lstrip('\n').strip()
+
         # Ensure there's a sources section if it's missing
-        if "##### Nguồn:" not in cleaned_response and "Nguồn:" not in cleaned_response and "##### Sources:" not in cleaned_response:
+        if "##### Sources:" not in cleaned_response and "Sources:" not in cleaned_response:
             # Try to extract URLs from the response and add a basic sources section
             urls = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', cleaned_response)
             if urls:
-                cleaned_response += "\n\n##### Nguồn:\n"
+                cleaned_response += "\n\n##### Sources:\n"
                 for i, url in enumerate(set(urls), 1):
                     cleaned_response += f"[{i}] {url}\n"
 
         # Add disclaimer if not present
-        disclaimer = "\n\n**Lưu ý**: Thông tin này chỉ mang tính chất giáo dục và không thể thay thế lời khuyên y tế chuyên nghiệp. Vui lòng tham khảo ý kiến bác sĩ để được tư vấn y tế phù hợp."
+        disclaimer = "\n\n**Note**: This information is for educational purposes only and cannot replace professional medical advice. Please consult with a healthcare professional for appropriate medical guidance."
 
-        if "lưu ý" not in cleaned_response.lower() and "tham khảo" not in cleaned_response.lower() and "disclaimer" not in cleaned_response.lower():
+        if "note:" not in cleaned_response.lower() and "consult" not in cleaned_response.lower() and "disclaimer" not in cleaned_response.lower():
             cleaned_response += disclaimer
 
         return cleaned_response
