@@ -46,6 +46,8 @@ class WebSearchConfig:
         self.include_sources = True  # Show source citations in web search responses
         self.max_results = 5  # Maximum number of search results to retrieve
         self.content_max_length = 500  # Maximum length of content snippet per result
+        # PubMed API configuration
+        self.pubmed_api_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
 
 class RAGConfig:
     def __init__(self):
