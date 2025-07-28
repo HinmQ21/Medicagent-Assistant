@@ -585,28 +585,90 @@ def create_agent_graph():
         # Get input language from state
         input_lang = state.get("input_lang", "en")
 
-        # classify chest x-ray into covid or normal
-        predicted_class = AgentConfig.image_analyzer.classify_chest_xray(image_path)
+        if not image_path:
+            response_text = "No image was provided for analysis. Please upload a chest X-ray image."
+            if input_lang != 'en':
+                response_text = translate_text(response_text, input_lang)
+            response = AIMessage(content=response_text)
+            return {
+                **state,
+                "output": response,
+                "needs_human_validation": False,
+                "agent_name": "CHEST_XRAY_AGENT"
+            }
 
-        if predicted_class == "covid19":
-            response_text = "The analysis of the uploaded chest X-ray image indicates a **POSITIVE** result for **COVID-19**."
-        elif predicted_class == "normal":
-            response_text = "The analysis of the uploaded chest X-ray image indicates a **NEGATIVE** result for **COVID-19**, i.e., **NORMAL**."
-        else:
-            response_text = "The uploaded image is not clear enough to make a diagnosis / the image is not a medical image."
+        try:
+            # classify chest x-ray into covid or normal
+            predicted_class = AgentConfig.image_analyzer.classify_chest_xray(image_path)
 
-        # Translate response if needed
-        if input_lang != 'en':
-            response_text = translate_text(response_text, input_lang)
+            if predicted_class == "covid19":
+                response_text = f"""Chest X-ray Analysis Results:
 
-        response = AIMessage(content=response_text)
+🔍 **COVID-19 Detection**: POSITIVE
+📊 **Result**: The analysis indicates findings potentially consistent with COVID-19
+📝 **Interpretation**: The chest X-ray shows patterns that may be associated with COVID-19 pneumonia
 
-        return {
-            **state,
-            "output": response,
-            "needs_human_validation": True,  # Medical diagnosis always needs validation
-            "agent_name": "CHEST_XRAY_AGENT"
-        }
+⚠️ **Important Medical Disclaimer**:
+- This is an AI-assisted analysis and NOT a definitive medical diagnosis
+- COVID-19 diagnosis requires clinical correlation with symptoms, exposure history, and laboratory tests (RT-PCR, antigen tests)
+- Many conditions can cause similar X-ray findings
+- Please consult with a qualified healthcare professional immediately for proper evaluation, additional testing, and appropriate medical management
+- If you have symptoms or suspect COVID-19 exposure, follow local health guidelines for testing and isolation"""
+
+            elif predicted_class == "normal":
+                response_text = f"""Chest X-ray Analysis Results:
+
+🔍 **COVID-19 Detection**: NEGATIVE
+📊 **Result**: The analysis indicates NORMAL chest X-ray findings
+📝 **Interpretation**: No obvious signs of COVID-19 pneumonia detected in this chest X-ray
+
+ℹ️ **Important Notes**:
+- A normal chest X-ray does not completely rule out COVID-19, especially in early stages or mild cases
+- Many COVID-19 patients have normal chest X-rays, particularly in the early phase of infection
+- Clinical symptoms and laboratory tests (RT-PCR, antigen tests) are more reliable for COVID-19 diagnosis
+
+⚠️ **Medical Disclaimer**:
+- This is an AI-assisted analysis and should not replace professional medical evaluation
+- If you have COVID-19 symptoms or exposure concerns, please consult with a healthcare professional and consider appropriate testing
+- Follow local health guidelines regardless of this X-ray analysis result"""
+
+            else:
+                response_text = f"""Chest X-ray Analysis Results:
+
+❌ **Analysis Status**: INCONCLUSIVE
+📝 **Issue**: The uploaded image is not clear enough for reliable analysis or may not be a valid chest X-ray image
+
+🔧 **Recommendations**:
+- Please ensure the image is a clear, high-quality chest X-ray
+- The image should be properly oriented and well-lit
+- Avoid blurry, cropped, or low-resolution images
+
+⚠️ **Next Steps**: Please upload a clearer chest X-ray image or consult with a healthcare professional for proper medical evaluation."""
+
+            # Translate response if needed
+            if input_lang != 'en':
+                response_text = translate_text(response_text, input_lang)
+
+            response = AIMessage(content=response_text)
+
+            return {
+                **state,
+                "output": response,
+                "needs_human_validation": True,  # Medical diagnosis always needs validation
+                "agent_name": "CHEST_XRAY_AGENT"
+            }
+
+        except Exception as e:
+            error_text = f"An error occurred while analyzing the chest X-ray image: {str(e)}"
+            if input_lang != 'en':
+                error_text = translate_text(error_text, input_lang)
+            error_response = AIMessage(content=error_text)
+            return {
+                **state,
+                "output": error_response,
+                "needs_human_validation": False,
+                "agent_name": "CHEST_XRAY_AGENT"
+            }
     
     def run_skin_lesion_agent(state: AgentState) -> AgentState:
         """Handle skin lesion image analysis."""
@@ -619,26 +681,106 @@ def create_agent_graph():
         # Get input language from state
         input_lang = state.get("input_lang", "en")
 
-        # classify chest x-ray into covid or normal
-        predicted_mask = AgentConfig.image_analyzer.segment_skin_lesion(image_path)
+        if not image_path:
+            response_text = "No image was provided for analysis. Please upload a skin lesion image."
+            if input_lang != 'en':
+                response_text = translate_text(response_text, input_lang)
+            response = AIMessage(content=response_text)
+            return {
+                **state,
+                "output": response,
+                "needs_human_validation": False,
+                "agent_name": "SKIN_LESION_AGENT"
+            }
 
-        if predicted_mask:
-            response_text = "Following is the analyzed **segmented** output of the uploaded skin lesion image:"
-        else:
-            response_text = "The uploaded image is not clear enough to make a diagnosis / the image is not a medical image."
+        try:
+            # Perform skin lesion segmentation
+            predicted_mask = AgentConfig.image_analyzer.segment_skin_lesion(image_path)
 
-        # Translate response if needed
-        if input_lang != 'en':
-            response_text = translate_text(response_text, input_lang)
+            if predicted_mask:
+                response_text = f"""Skin Lesion Analysis Results:
 
-        response = AIMessage(content=response_text)
+🔍 **Segmentation Status**: SUCCESSFUL
+📊 **Analysis Type**: Automated lesion boundary detection and segmentation
+📝 **Output**: Segmented visualization with lesion boundaries highlighted
 
-        return {
-            **state,
-            "output": response,
-            "needs_human_validation": True,  # Medical diagnosis always needs validation
-            "agent_name": "SKIN_LESION_AGENT"
-        }
+🎯 **What This Analysis Shows**:
+- **Lesion Boundaries**: The highlighted areas show the detected boundaries of the skin lesion
+- **Segmentation Mask**: The overlay indicates the precise location and extent of the lesion
+- **Spatial Analysis**: This helps assess lesion size, shape, and border characteristics
+
+📋 **Clinical Relevance**:
+- **Border Assessment**: Irregular or asymmetric borders may indicate concern
+- **Size Measurement**: Accurate lesion dimensions for monitoring changes over time
+- **Shape Analysis**: Helps evaluate lesion morphology and growth patterns
+- **Documentation**: Provides baseline for future comparison and monitoring
+
+⚠️ **Important Medical Disclaimer**:
+- This is an AI-assisted **segmentation tool**, NOT a diagnostic system
+- Segmentation does **NOT** determine if a lesion is benign or malignant
+- This analysis **CANNOT** replace dermatological examination or biopsy
+- Any concerning skin lesions require evaluation by a qualified dermatologist
+- Changes in size, color, shape, or texture should be evaluated promptly by a healthcare professional
+
+🏥 **Next Steps**:
+- Consult a dermatologist for proper clinical evaluation
+- Consider dermoscopy or biopsy if recommended by your healthcare provider
+- Monitor any changes and seek immediate medical attention for rapid changes
+- Use this segmentation as a reference for tracking lesion changes over time
+
+📸 **Segmented Image**: The processed image with lesion boundaries is available for download and clinical reference."""
+
+            else:
+                response_text = f"""Skin Lesion Analysis Results:
+
+❌ **Segmentation Status**: UNSUCCESSFUL
+📝 **Issue**: Unable to detect or segment skin lesion in the uploaded image
+
+🔧 **Possible Reasons**:
+- Image quality may be insufficient (blurry, low resolution, poor lighting)
+- The image may not contain a clear skin lesion
+- Lesion may be too small or faint for automated detection
+- Image orientation or cropping may affect analysis
+
+💡 **Recommendations for Better Results**:
+- Ensure good lighting and clear focus when taking the photo
+- Capture the lesion with adequate surrounding normal skin for context
+- Use high resolution and avoid excessive zoom or cropping
+- Take the photo perpendicular to the skin surface
+- Ensure the lesion is clearly visible and well-contrasted
+
+⚠️ **Important Note**:
+- Inability to segment does not mean the lesion is normal or abnormal
+- Some lesions may be difficult for automated systems to detect
+- **Always consult a dermatologist** for proper evaluation of any skin concerns
+- Do not rely solely on automated analysis for medical decisions
+
+🏥 **Next Steps**: Please consult with a dermatologist for professional evaluation, regardless of this automated analysis result."""
+
+            # Translate response if needed
+            if input_lang != 'en':
+                response_text = translate_text(response_text, input_lang)
+
+            response = AIMessage(content=response_text)
+
+            return {
+                **state,
+                "output": response,
+                "needs_human_validation": True,  # Medical diagnosis always needs validation
+                "agent_name": "SKIN_LESION_AGENT"
+            }
+
+        except Exception as e:
+            error_text = f"An error occurred while analyzing the skin lesion image: {str(e)}"
+            if input_lang != 'en':
+                error_text = translate_text(error_text, input_lang)
+            error_response = AIMessage(content=error_text)
+            return {
+                **state,
+                "output": error_response,
+                "needs_human_validation": False,
+                "agent_name": "SKIN_LESION_AGENT"
+            }
     
     def handle_human_validation(state: AgentState) -> Dict:
         """Prepare for human validation if needed."""
