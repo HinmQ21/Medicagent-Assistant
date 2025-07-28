@@ -22,7 +22,7 @@ MODEL_CHAT = "gemini-2.0-flash-lite"
 class AgentDecisoinConfig:
     def __init__(self):
         self.llm = ChatGoogleGenerativeAI(
-            model="MODEL_CHAT",
+            model=MODEL_CHAT,
             google_api_key=os.getenv("GOOGLE_API_KEY"),
             temperature=0.1  # Deterministic
         )
@@ -30,7 +30,7 @@ class AgentDecisoinConfig:
 class ConversationConfig:
     def __init__(self):
         self.llm = ChatGoogleGenerativeAI(
-            model="MODEL_CHAT",
+            model=MODEL_CHAT,
             google_api_key=os.getenv("GOOGLE_API_KEY"),
             temperature=0.7  # Creative but factual
         )
@@ -38,7 +38,7 @@ class ConversationConfig:
 class WebSearchConfig:
     def __init__(self):
         self.llm = ChatGoogleGenerativeAI(
-            model="MODEL_CHAT",
+            model=MODEL_CHAT,
             google_api_key=os.getenv("GOOGLE_API_KEY"),
             temperature=0.3  # Slightly creative but factual
         )
@@ -64,22 +64,22 @@ class RAGConfig:
             google_api_key=os.getenv("GOOGLE_API_KEY")
         )
         self.llm = ChatGoogleGenerativeAI(
-            model="MODEL_CHAT",
+            model=MODEL_CHAT,
             google_api_key=os.getenv("GOOGLE_API_KEY"),
             temperature=0.3  # Slightly creative but factual
         )
         self.summarizer_model = ChatGoogleGenerativeAI(
-            model="MODEL_CHAT",
+            model=MODEL_CHAT,
             google_api_key=os.getenv("GOOGLE_API_KEY"),
             temperature=0.5  # Slightly creative but factual
         )
         self.chunker_model = ChatGoogleGenerativeAI(
-            model="MODEL_CHAT",
+            model=MODEL_CHAT,
             google_api_key=os.getenv("GOOGLE_API_KEY"),
             temperature=0.0  # factual
         )
         self.response_generator_model = ChatGoogleGenerativeAI(
-            model="MODEL_CHAT",
+            model=MODEL_CHAT,
             google_api_key=os.getenv("GOOGLE_API_KEY"),
             temperature=0.3  # Slightly creative but factual
         )
@@ -88,7 +88,7 @@ class RAGConfig:
 
         self.huggingface_token = os.getenv("HUGGINGFACE_TOKEN")
 
-        self.reranker_model = "cross-encoder/ms-marco-TinyBERT-L-6"
+        self.reranker_model = "pritamdeka/S-PubMedBert-MS-MARCO"
         self.reranker_top_k = 3
 
         self.max_context_length = 8192  # (Change based on your need) # 1024 proved to be too low (retrieved content length > context length = no context added) in formatting context in response_generator code
@@ -107,7 +107,7 @@ class MedicalCVConfig:
         self.skin_lesion_model_path = "./agents/image_analysis_agent/skin_lesion_agent/models/checkpointN25_.pth.tar"
         self.skin_lesion_segmentation_output_path = "./uploads/skin_lesion_output/segmentation_plot.png"
         self.llm = ChatGoogleGenerativeAI(
-            model="MODEL_CHAT",
+            model=MODEL_CHAT,
             google_api_key=os.getenv("GOOGLE_API_KEY"),
             temperature=0.1  # Keep deterministic for classification tasks
         )
