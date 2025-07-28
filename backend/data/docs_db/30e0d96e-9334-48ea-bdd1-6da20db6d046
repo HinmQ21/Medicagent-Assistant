@@ -1,0 +1,68 @@
+## Resizing images phase
+
+Resizing the images is an essential process to satisfy the requirement of CNN of equally sized input images. In this research, the process of resizing X-ray images has been done to fit all X-ray images to the input size of the used pre-trained CNN models which are VGG19 and EfficientNetB0. Therefore, all images' versions either full or segmented versions were resized to fit the CNNs input image size which is 224 × 224 pixels. To expedite
+
+picture_counter_5 The image is a chest X-ray.
+
+picture_counter_6 The image is an X-ray of a human chest.
+
+picture_counter_7 The image is a chest X-ray showing the rib cage, lungs, and other internal structures.
+
+picture_counter_8 The image is a chest X-ray.
+
+(a) Original COVID-31
+
+picture_counter_9 The image shows a histogram with the x-axis ranging from 0 to 250 and the y-axis ranging from 0 to 3000. The histogram has three main peaks.
+
+( b) Enhanced HE
+
+picture_counter_10 The image is a histogram with the x-axis ranging from 0 to 250 and the y-axis ranging from 0 to 3500. The histogram shows the distribution of data with numerous bars of varying heights.
+
+(c) Enhanced CLAHE
+
+(d) Complement
+
+picture_counter_11 The image shows a histogram with the x-axis ranging from 0 to 250 and the y-axis ranging from 0 to 3000. The histogram is a distribution of data, with the highest frequency of values between 140 and 180. There is a smaller peak around 210.
+
+(e) Histogram of original image
+
+picture_counter_12 The image is a histogram with the x-axis representing pixel intensity values (0-255) and the y-axis representing frequency. The histogram shows a bimodal distribution with peaks around 100 and 150, and a smaller peak near 250.
+
+(f) Histogram of HE image
+
+(g) Histogram of CLAHE
+
+(h) Histogram of complement
+
+Figure 2. An X-ray image and its enhanced versions after applying HE, CLAHE and complement to the original image and the corresponding histogram plots.
+
+<!-- page_break -->
+
+picture_counter_13 The image is a chest X-ray.
+
+(a) Original COVID-31
+
+picture_counter_14 The image shows a silhouette of human lungs.
+
+Mask of COVID-31
+
+picture_counter_15 The image displays a chest X-ray showing the lungs. It is labeled as "Original COVID-31".
+
+picture_counter_16 The image is a chest X-ray.
+
+(D) Complement
+
+picture_counter_17 The image shows a grayscale rendering of a pair of lungs.
+
+picture_counter_18 The image is a chest X-ray.
+
+( b) Enhanced HE
+
+picture_counter_19 The image is an X-ray of a chest.
+
+(c) Enhanced CLAHE
+
+
+
+
+## Mul/g415plica/g415on

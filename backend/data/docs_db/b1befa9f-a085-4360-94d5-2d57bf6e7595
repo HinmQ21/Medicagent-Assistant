@@ -1,0 +1,32 @@
+## Data source
+
+The dataset consists of a total of 2870 human brain MRI images systematically classified into four different categories: glioma, meningioma, no tumor and pituitary. The distribution of labeled images into these four classes is shown in Table 1 for   reference 17 .
+
+<!-- page_break -->
+
+Table 1. Distribution of the preprocessed brain tumor dataset.
+
+| Data            |   Glioma |   Meningioma |   No tumor |   Pituitary |   Total |
+|-----------------|----------|--------------|------------|-------------|---------|
+| Training data   |      696 |          704 |        316 |         676 |    2452 |
+| Testing data    |       92 |           93 |         49 |          90 |     324 |
+| Validation data |      138 |          140 |         75 |         135 |     488 |
+
+Glioma is the most common type of malignant brain tumor and typically occurs in glial cells in the brain and spinal cord. Meningioma is a benign type of brain tumor, but can become malignant without appropriate intervention. These classes are labeled by physicians. The size of the input images is 64 × 64. Table 1 shows the training, test and validation set discriminations by class.
+
+
+## Deep learning
+
+Deep learning is a subset of machine learning that focuses on training artificial neural networks to perform complex tasks by learning patterns and representations directly from data. Unlike traditional machine learning approaches that require manual feature engineering, deep learning algorithms autonomously extract hierarchical features from data, leading to the creation of powerful and highly accurate   models 18-20 . In this study, a CNN architecture is employed.
+
+
+## Convolution neural network
+
+Convolutional neural networks represent a major breakthrough in deep learning and computer vision. These architectures are specifically designed to extract meaningful features from complex visual data, such as images and video. The inherent structure of the CNN, consisting of convolutional layers, pooling layers, and fully connected layers, mimics the ability of the human visual system to recognize patterns and hierarchical features. Convolutional layers use convolutional operations to detect local features, which are then progressively abstracted by pooling layers that condense the information. The resulting hierarchical representations are then fed into fully connected layers for classification or regression tasks. CNN have redefined the landscape of image recognition, achieving remarkable success in diverse domains ranging from image classification and object detection to face recognition and medical image   analysis 21 .
+
+
+## Transfer learning
+
+Transfer learning stands as a fundamental concept within both machine learning and deep learning, involving the utilization of knowledge garnered from training a model on a particular task and subsequently applying that knowledge to another related task. In the realm of neural networks, transfer learning manifests significant potency. It encompasses the process of employing a pre-trained model, typically trained on a comprehensive and varied dataset, and fine-tuning it on a fresh dataset or task 21-23 .
+
+In this study, transfer learning models InceptionV3, VGG16, VGG19, and EfficientNetB4 were used in the classification process.

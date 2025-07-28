@@ -1,0 +1,16 @@
+## 3.2.9. Rank Loss
+
+Assuming that hard-to-predict pixels lead to larger prediction errors while training the model, rank loss (Xie et al., 2020b) is proposed to encourage learning more discriminative information for harder pixels. The image pixels are ranked based on their prediction errors, and the top K pixels with the largest prediction errors from the lesion or background areas are selected. Let ˆ y 0 i j and ˆ y 1 il are respectively the selected j th hard-to-predict pixel of background and l th hard-to-predict pixel of lesion in the image i , we have:
+
+$$\mathcal { L } _ { r a n k } ( X, Y ; \theta ) = \sum _ { i = 1 } ^ { N } \sum _ { j = 1 } ^ { K } \sum _ { l = 1 } ^ { K } \max \{ 0, \hat { y } _ { i j } ^ { 0 } - \hat { y } _ { i l } ^ { 1 } + m a r g i n \},$$
+
+which encourages ˆ 1 y il to be greater than ˆ y 0 i j plus margin.
+
+Similar to rank loss, narrowband suppression loss (Deng et al., 2020) also adds a constraint between hard-to-predict pixels of background and lesion. Di GLYPH&lt;11&gt; erent from rank loss, narrowband suppression loss collects pixels in a narrowband along the groundtruth lesion boundary with radius r instead of all image pixels and then selects the top K pixels with the largest prediction errors.
+
+
+## 4. Evaluation
+
+Evaluation is one of the main challenges for any image segmentation task, skin lesions included (Celebi et al., 2015b). Segmentation evaluation may be subjective or objective (Zhang et al., 2008), the former involving the visual assessment of the results by a panel of human experts, and the latter involving the comparison of the results with ground-truth segmentations using quantitative evaluation metrics.
+
+Subjective evaluation may provide a nuanced assessment of results, but because experts must grade each batch of results, it is usually too laborious to be applied, except in limited settings. In objective assessment, experts are consulted once, to provide the ground-truth segmentations, and that knowledge can then be reused indefinitely. However, due to intra- and inter-annotator variations, it raises the question of whether any individual ground-truth segmentation reflects the ideal 'true' segmentation, an issue we address in Section 4.2. It also raises the issue of choosing one or more evaluation metrics (Section 4.3).

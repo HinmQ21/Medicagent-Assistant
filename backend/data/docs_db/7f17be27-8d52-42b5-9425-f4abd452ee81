@@ -1,0 +1,17 @@
+## Segmented Lung region
+
+picture_counter_21 The image shows a grayscale X-ray of human lungs.
+
+(a) Original COVID-31
+
+picture_counter_22 The image is an X-ray of a patient's lungs.
+
+( b) Enhanced HE
+
+(c) Enhanced CLAHE
+
+(D) Complement
+
+Figure 3. X-ray original image and its enhanced versions and the segmented lung region of each version.
+
+the training process, it was found that the size of 112 × 112 pixels expedited the training without affecting the performance metrics.

@@ -17,7 +17,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmb
 # Load environment variables from .env file
 load_dotenv()
 
-MODEL_CHAT = "gemini-2.0-flash-lite"
+MODEL_CHAT = "gemini-2.0-flash"
 
 class AgentDecisoinConfig:
     def __init__(self):
@@ -87,8 +87,9 @@ class RAGConfig:
         self.vector_search_type = 'similarity'  # or 'mmr'
 
         self.huggingface_token = os.getenv("HUGGINGFACE_TOKEN")
-
-        self.reranker_model = "pritamdeka/S-PubMedBert-MS-MARCO"
+        
+        self.reranker_model = 'cross-encoder/ms-marco-TinyBERT-L-6'
+        # self.reranker_model = "pritamdeka/S-PubMedBert-MS-MARCO"
         self.reranker_top_k = 3
 
         self.max_context_length = 8192  # (Change based on your need) # 1024 proved to be too low (retrieved content length > context length = no context added) in formatting context in response_generator code
@@ -96,7 +97,7 @@ class RAGConfig:
         self.include_sources = True  # Show links to reference documents and images along with corresponding query response
 
         # ADJUST ACCORDING TO ASSISTANT'S BEHAVIOUR BASED ON THE DATA INGESTED:
-        self.min_retrieval_confidence = 0.40  # The auto routing from RAG agent to WEB_SEARCH agent is dependent on this value
+        self.min_retrieval_confidence = 0.30  # The auto routing from RAG agent to WEB_SEARCH agent is dependent on this value
 
         self.context_limit = 20     # include last 20 messsages (10 Q&A pairs) in history
 

@@ -24,6 +24,7 @@ parser = argparse.ArgumentParser(description="Process some command-line argument
 # Add arguments
 parser.add_argument("--file", type=str, required=False, help="Enter file path to ingest")
 parser.add_argument("--dir", type=str, required=False, help="Enter directory path of files to ingest")
+parser.add_argument("--force-recreate", action="store_true", help="Force recreate the collection if it exists")
 
 # Parse arguments
 args = parser.parse_args()
@@ -35,6 +36,14 @@ rag = MedicalRAG(config)
 
 # document ingestion
 def data_ingestion():
+    # Handle force recreate option
+    if args.force_recreate:
+        print("🔄 Force recreate option enabled - resetting Qdrant collection...")
+        try:
+            rag.vector_store.reset_collection()
+            print("✅ Successfully reset collection")
+        except Exception as e:
+            print(f"⚠️  Warning: Could not reset collection: {e}")
 
     if args.file:
         # Define path to file

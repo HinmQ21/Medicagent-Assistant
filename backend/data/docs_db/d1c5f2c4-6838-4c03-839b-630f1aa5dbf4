@@ -1,0 +1,22 @@
+## 3.2.7. End-Point Error Loss
+
+Many authors consider the lesion boundary the most challenging region to segment. The end-point error loss (Sarker et al., 2018; Singh et al., 2019) underscores borders by using the first derivative of the segmentation masks instead of their raw values:
+
+$$\mathcal { L } _ { e p e } ( X, Y ; \theta ) & = \sum _ { i = 1 } ^ { N } \sum _ { p \in \Omega } \sqrt { ( \xi _ { i p } ^ { 0 } - y _ { i p } ^ { 0 } ) ^ { 2 } + ( \xi _ { i p } ^ { 1 } - y _ { i p } ^ { 1 } ) ^ { 2 } } ),$$
+
+where ˆ 0 y ip and ˆ y 1 ip are the directional first derivatives of the estimated segmentation map in the x and y spatial directions, respectively and, similarly, y 0 ip and y 1 ip for the ground-truth derivatives. Thus, this loss function encourages the magnitude and orientation of edges of estimation and ground-truth to match, thereby mitigating vague boundaries in skin lesion segmentation.
+
+
+## 3.2.8. Adversarial Loss
+
+Another way to add high-order class-label consistency is adversarial training. Adversarial training may be employed along with traditional supervised training to distinguish estimated segmentation from ground-truths using a discriminator. The optimization objective will weight a pixel-wise loss L s matching prediction to ground-truth, and an adversarial loss, as follows:
+
+$$\mathcal { L } _ { a d v } ( X, Y ; \theta, \theta _ { a } ) = \mathcal { L } _ { s } ( X, Y ; \theta ) = \lambda [ \mathcal { L } _ { c e } ( Y, 1 ; \theta _ { a } ) + \mathcal { L } _ { c e } ( \hat { Y }, 0 ; \theta, \theta _ { a } ) ],$$
+
+where GLYPH&lt;18&gt; a are the adversarial model parameters. The adversarial loss employs a binary cross-entropy loss to encourage the segmentation model to produce indistinguishable prediction maps from ground-truth maps. The adversarial objective (Eqn. (16)) is optimized in a mini-max game by simultaneously minimizing it with respect to GLYPH&lt;18&gt; and maximizing it with respect to GLYPH&lt;18&gt; a .
+
+Pixel-wise losses, such as cross-entropy (Izadi et al., 2018; Singh et al., 2019; Jiang et al., 2019), soft Jaccard (Sarker et al., 2019; Tu et al., 2019; Wei et al., 2019), end-point error (Tu et al., 2019; Singh et al., 2019), MSE (Peng et al., 2019) and MAE (Sarker et al., 2019; Singh et al., 2019; Jiang et al., 2019) losses have all been incorporated in adversarial learning of skin lesion segmentation. In addition, Xue et al. (2018) and Tu et al. (2019) presented a multi-scale adversarial term to match a hierarchy of
+
+<!-- page_break -->
+
+local and global contextual features in the predicted maps and ground-truths. In particular, they minimize the MAE of multi-scale features extracted from di GLYPH&lt;11&gt; erent layers of the adversarial model.

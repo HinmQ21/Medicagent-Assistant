@@ -1,0 +1,42 @@
+## 3.2.3. Dice and Jaccard Loss
+
+The Dice score and the Jaccard index are two popular metrics for segmentation evaluation (Section 4.3), measuring the overlap between predicted segmentation and ground-truth. Models may employ di GLYPH&lt;11&gt; erentiable approximations of these metrics, known as soft Dice (He et al., 2017; Kaul et al., 2019; He et al., 2018; Wang et al., 2019a) and soft Jaccard (Venkatesh et al., 2018; Hasan et al., 2020; Sarker et al., 2019) to optimize an objective directly related to the evaluation metric.
+
+For two classes, these losses are defined as follows:
+
+$$\mathcal { L } _ { d i c e } ( X, Y ; \theta ) = 1 - \frac { 1 } { N } \sum _ { i = 1 } ^ { N } \frac { 2 \sum _ { p \in \Omega } y _ { i p } \hat { y } _ { i p } } { \sum _ { p \in \Omega } y _ { i p } + \hat { y } _ { i p } },$$
+
+$$\mathcal { L } _ { j a c c } ( X, Y ; \theta ) = 1 - \frac { 1 } { N } \sum _ { i = 1 } ^ { N } \frac { \sum _ { p \in \Omega } y _ { i p } \hat { y } _ { i p } } { \sum _ { p \in \Omega } y _ { i p } + \hat { y } _ { i p } - y _ { i p } \hat { y } _ { i p } }.$$
+
+Di GLYPH&lt;11&gt; erent variations of overlap-based loss functions address the class imbalance problem in medical image segmentation tasks. The Tanimoto distance loss, L td is a modified Jaccard loss optimized in some models (Canalini et al., 2019; Baghersalimi et al., 2019; Yuan et al., 2017):
+
+$$\mathcal { L } _ { t d } ( X, Y ; \theta ) = 1 - \frac { 1 } { N } \sum _ { i = 1 } ^ { N } \frac { \sum _ { p \in \Omega } y _ { i p } \hat { y } _ { i p } } { \sum _ { p \in \Omega } y _ { i p } ^ { 2 } + \hat { y } _ { i p } ^ { 2 } - y _ { i p } \hat { y } _ { i p } },$$
+
+which is equivalent to the Jaccard loss when both yip and ˆ yip are binary.
+
+The Tversky loss (Abraham and Khan, 2019), inspired by the Tversky index, is another Jaccard variant that penalizes false
+
+<!-- page_break -->
+
+positives and false negatives di GLYPH&lt;11&gt; erently to address the class imbalance problem:
+
+$$\mathcal { L } _ { \nu } ( X, Y ; \theta ) = 1 - \frac { 1 } { N } \sum _ { i = 1 } ^ { N } \frac { \sum _ { p \in \Omega } y _ { i p } \hat { y } _ { i p } } { \sum _ { p \in \Omega } y _ { i p } \hat { y } _ { i p } + \alpha y _ { i p } ( 1 - \hat { y } _ { i p } ) + \beta ( 1 - y _ { i p } ) \hat { y } _ { i p } },$$
+
+where GLYPH&lt;11&gt; and GLYPH&lt;12&gt; tune the contributions of false negatives and false positives with GLYPH&lt;11&gt; + GLYPH&lt;12&gt; = 1.
+
+Abraham and Khan (2019) combined the Tvserky and focal losses (Lin et al., 2017), the latter encouraging the algorithm to focus on the hard-to-predict pixels:
+
+$$\mathcal { L } _ { f t v } = \mathcal { L } _ { t v } ^ { \frac { 1 } { \gamma } },$$
+
+where GLYPH&lt;13&gt; controls the relative importance of the hard-to-predict samples.
+
+
+## 3.2.4. Matthews Correlation Coe GLYPH&lt;14&gt; cient Loss
+
+Matthews correlation coe GLYPH&lt;14&gt; cient ( MCC ) loss is a metric-based loss function based on the correlation between predicted and ground-truth labels (Abhishek and Hamarneh, 2021). In contrast to the overlap-based losses discussed in Section 3.2.3, MCC considers misclassifying the background pixels by penalizing false negative labels, making it more e GLYPH&lt;11&gt; ective in the presence of skewed class distributions. MCC loss is defined as:
+
+$$\mathcal { L } _ { M C C } ( X, Y ; \theta ) = 1 - \frac { 1 } { N } \sum _ { i = 1 } ^ { N } \frac { \sum _ { p \in \Delta } \hat { y } _ { i p } y _ { i p } \frac { \sum _ { p \in \Delta } \hat { y } _ { i p } \sum _ { p \in \Delta } y _ { i p } } { M _ { i } } } { f ( \hat { y } _ { i } y _ { i } ) },$$
+
+$$f ( \hat { y } _ { i }, y _ { i } ) = \sqrt { \sum _ { p \in \Omega } \hat { y } _ { i p } \sum _ { p \in \Omega } y _ { i p } - \frac { \sum _ { p \in \Omega } \hat { y } _ { i p } ( \sum _ { p \in \Omega } y _ { i p } ) ^ { 2 } } { M _ { i } } - \frac { ( \sum _ { p \in \Omega } \hat { y } _ { i p } ) ^ { 2 } \sum _ { p \in \Omega } y _ { i p } } { M _ { i } } + ( \frac { \sum _ { p \in \Omega } \hat { y } _ { i p } \sum _ { p \in \Omega } y _ { i p } } { M _ { i } } ) ^ { 2 } } \,,$$
+
+where Mi is the total number of pixels in the image i .

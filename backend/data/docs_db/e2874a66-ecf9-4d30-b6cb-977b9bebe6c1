@@ -1,0 +1,62 @@
+## Results
+
+Tables 2 and 3 show the results of training VGG19 using the original and different enhanced versions of full X-ray images and of segmented versions respectively. As it is shown in Table 2, applying different image enhancement techniques has improved the performance of the classification model. The accuracy of classification for the model trained using the original images' version was 0.913, however, it has been improved for the enhanced versions to reach 0.94, 0.95, and 0.9475 for histeq, CLAHE, and complement respectively. The detailed results including TP , TN, FP, FN, sensitivity, specificity, precision, F1 score, test accuracy, and AUC of the proposed full X-ray images using VGG19 are shown in Table 2. The performance of the model trained using the CLAHE version is the best.
+
+Regarding the segmented versions, as it is shown in Table 3 the accuracy of classification of the model trained using the original segmented dataset version was 0.887. However, the accuracy has been improved for the enhanced segmented dataset versions to reach 0.91 using Histeq techniques, 0.9049 for CLAHE and 0.9075 for the complement version. It is clear that the accuracies using different enhanced versions are close to each other, and they are better than that of the original segmented version. The detailed results using the different metrics are shown in Table 3.
+
+Table 4 shows the results of training EfficientNetB0 using the original and different enhanced versions of full X-ray images. The accuracy of classification using the original full images' version was 0.915, it reached 0.94, 0.938, and 0.94 for histeq, CLAHE, and complement versions respectively. The accuracies for the models trained using different enhanced versions are better than that of the original version. The detailed results using the different metrics are shown in Table 4.
+
+Regarding the segmented versions, as shown in Table 5 the accuracy of the classification for the EfficientNetB0 model trained using the original segmented lung dataset version was 0.885. However, the accuracy has been improved to 0.905, 0.905, and 0.9075 for Histeq, CLAHE and complement versions respectively. As with VGG19, the accuracies of training EfficientNetB0 using different enhanced segmented versions are close to each other, but they are all better than that of the original segmented version. The detailed results using the different metrics are shown in Table 5.
+
+It is clear that the performance of all enhanced versions is better than that of their associated original version using either VGG19 or EfficientNetB0 models and for both full and segmented versions. By comparing the results
+
+| Dataset    |   Tn |   Fp |   Tp |   Fn |   Sensitivity |   Specificity |   Precision |   F1 score |   Test acc |    AUC |
+|------------|------|------|------|------|---------------|---------------|-------------|------------|------------|--------|
+| Original   |  170 |   30 |  195 |    5 |         0.975 |         0.85  |     0.8667  |     0.9176 |     0.913  | 0.9125 |
+| Histeq     |  192 |    8 |  184 |   16 |         0.92  |         0.96  |     0.9583  |     0.9388 |     0.94   | 0.94   |
+| CLAHE      |  188 |   12 |  192 |    8 |         0.96  |         0.94  |     0.9412  |     0.9505 |     0.95   | 0.95   |
+| Complement |  187 |   13 |  192 |    8 |         0.96  |         0.935 |     0.93659 |     0.9482 |     0.9475 | 0.9475 |
+
+Table 2. The results of applying VGG19 to original and different enhanced versions of the used dataset.
+
+Table 3. The results of applying VGG19 to original and different enhanced versions of the used dataset after segmentation.
+
+| Dataset              |   Tn |   Fp |   Tp |   Fn |   Sensitivity |   Specificity |   Precision |   F1 score |   Test acc |    AUC |
+|----------------------|------|------|------|------|---------------|---------------|-------------|------------|------------|--------|
+| Segmented original   |  157 |   43 |  198 |    2 |         0.99  |         0.785 |      0.8216 |     0.898  |      0.887 | 0.8875 |
+| Segmented Histeq     |  173 |   27 |  191 |    9 |         0.955 |         0.865 |      0.876  |     0.9139 |      0.91  | 0.91   |
+| Segmented CLAHE      |  173 |   27 |  189 |   11 |         0.945 |         0.865 |      0.875  |     0.9086 |      0.905 | 0.9049 |
+| Segmented complement |  169 |   31 |  194 |    6 |         0.97  |         0.845 |      0.862  |     0.9129 |      0.908 | 0.9075 |
+
+Table 4. The results of applying EfficientNetB0 to original and different enhanced versions of the used dataset.
+
+| Dataset    |   Tn |   Fp |   Tp |   Fn |   Sensitivity |   Specificity |   Precision |   F1 score |   Test acc |    AUC |
+|------------|------|------|------|------|---------------|---------------|-------------|------------|------------|--------|
+| Original   |  173 |   27 |  193 |    7 |         0.965 |         0.865 |      0.877  |    0.91905 |      0.915 | 0.915  |
+| Histeq     |  192 |    8 |  184 |   16 |         0.92  |         0.96  |      0.9583 |    0.9387  |      0.94  | 0.94   |
+| CLAHE      |  194 |    6 |  181 |   19 |        90.5   |         0.97  |      0.9679 |    0.9354  |      0.938 | 0.9375 |
+| Complement |  193 |    7 |  183 |   17 |         0.915 |         0.965 |      0.963  |    0.9385  |      0.94  | 0.94   |
+
+<!-- page_break -->
+
+Table 5. The results of applying EfficientNetB0 to original and different enhanced versions of the used dataset after segmentation.
+
+| Dataset              |   Tn |   Fp |   Tp |   Fn |   Sensitivity |   Specificity |   Precision |   F1 score |   Test acc |    AUC |
+|----------------------|------|------|------|------|---------------|---------------|-------------|------------|------------|--------|
+| Segmented original   |  160 |   40 |  194 |    6 |         0.97  |         0.8   |      0.829  |     0.894  |     0.885  | 0.885  |
+| Segmented Histeq     |  181 |   19 |  181 |   19 |         0.905 |         0.905 |      0.905  |     0.905  |     0.905  | 0.905  |
+| Segmented CLAHE      |  183 |   17 |  179 |   21 |         0.895 |         0.915 |      0.9133 |     0.904  |     0.905  | 0.905  |
+| Segmented complement |  174 |   26 |  189 |   11 |         0.945 |         0.87  |      0.879  |     0.9108 |     0.9075 | 0.9075 |
+
+of the full X-ray images and segmented images using the same CNN model, reductions in the performance of the CNN models trained using the segmented datasets rather than those trained using full-image datasets were observed. The models built using full images achieved better performance in general. The reason for that might be that the full images may have more details outside the lung region in the surroundings region that contribute to the classification and help to improve the performance.
+
+Regarding the comparison of the used 2 CNNs models, the results of the two models are close to each other, however, the results of VGG19 are a bit better than those of EfficientNetB0. The best achieved performance is of the VGG19 model trained using the CLAHE version of full X-ray images for binary classification of chest X-ray images into COVID-19 or normal. It achieved a sensitivity of 0.96, specificity of 0.94, precision of 0.9412, F1 score of 0.9505 and accuracy of 0.95. Figures 7, 8, 9 and 10 show the training and validation accuracies, the training and validation losses, the training and test ROC curve and the confusion matrix of that best achieved model respectively.
+
+
+## Discussion
+
+Distinguishing COVID-19 from normal and other classes is one of the important issues since the pandemic in 2019. The contribution of this research is to develop a framework to classify Coronavirus suspected cases as normal or COVID-19 positive cases. Different pre-processing steps have been applied to improve the performance of the classification. After that, multiplication between the original images and the associated lung masks has been applied to get the segmented lungs. The same process of multiplication has been applied between different enhanced image versions and the associated masks to get different enhanced versions of segmented datasets. All these versions are introduced to CNN models which are VGG19 and EfficientNetB0. Therefore, two different approaches have been used to train pre-trained CNN models using transfer learning. The first approach uses full chest X-ray images, while the other approach uses lung segmented images.
+
+From the results of conducted experiments, it has been observed that the proposed framework has achieved a good performance using either full or segmented images, however the performance using full images is better than that using segmented. Moreover, it has been observed that the performance of the classification models has been improved after applying enhancement techniques.
+
+To evaluate the proposed framework with respect to the state-of-the-art works in COVID-19, it has been compared with the related works reviewed in this research as described in Table 6. It is worth mentioning that, the comparison is not an easy task in COVID research as the pandemic broke out in the world suddenly, all Covid research used different sources of data either local, public, or combined from different databases. Some of the public datasets are collected from different other databases. Even the research that used the same public

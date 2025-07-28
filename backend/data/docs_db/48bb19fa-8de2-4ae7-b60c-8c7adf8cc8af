@@ -1,0 +1,26 @@
+## 3.1.4. Transformer Models
+
+Initially proposed for natural language processing (Vaswani et al., 2017), Transformers have proliferated in the last couple of years in other areas, including computer vision applications, especially with improvements made over the years for optimizing the computational cost of self-attention (Parmar et al., 2018; Hu et al., 2019; Ramachandran et al., 2019; Cordonnier et al., 2019; Zhao et al., 2020; Dosovitskiy et al., 2020), and have consequently also been adapted for semantic segmentation tasks (Ranftl et al., 2021; Strudel et al., 2021; Zheng et al., 2021). For medical image segmentation, TransUNet (Chen et al., 2021) was one of the first works to use Transformers along with CNNs in the encoder of a U-Net-like encoder-decoder architecture, and Gulzar and Khan (2022) showed that TransUNet outperforms several CNN-only models for skin lesion segmentation. To reduce the computational complexity involved with high-resolution medical images, Cao et al. (2021) proposed the Swin-Unet architecture that uses selfattention within shifted windows (Liu et al., 2021b). For a comprehensive review of the literature of Transformers in general medical image analysis, we refer the interested readers to the surveys by He et al. (2022) and Shamshad et al. (2022).
+
+Zhang et al. (2021b) propose TransFuse which parallelly computes features from CNN and Transformer modules, with the former capturing low-level spatial information and the latter responsible for modeling global context, and these features are then combined using a self-attention-based fusion module. Evaluation on the ISIC 2017 dataset shows superior segmentation performance and faster convergence. The multi-compound Transformer (Ji et al., 2021) leverages Transformer-based self-attention and cross-attention modules between the encoder and the decoder components of U-Net to learn rich features from multi-scale CNN features. Wang et al. (2021a) incorporate boundary-wise prior knowledge in segmentation models using a boundary-aware Transformer (BAT) to deal with the ambiguous boundaries in skin lesion images. More recently, Wu et al. (2022a) introduce a feature-adaptive Transformer network (FAT-Net) that comprised of a dual CNN-Transformer encoder, a light-weight trainable feature-adaptation module, and a memory-e GLYPH&lt;14&gt; cient decoder using a squeeze-and-excitation module. The resulting segmentation model is more accurate at segmenting skin lesions while also being faster (fewer parameters and computation) than several CNN-only models.
+
+
+## 3.2. Loss Functions
+
+A segmentation model f may be formalized as a function ˆ y = f GLYPH&lt;18&gt; ( x ), which maps an input image x to an estimated segmentation map ˆ parameterized by a (large) set of parameters y GLYPH&lt;18&gt; . For skin lesions, ˆ is a binary mask separating the lesion from the surrounding y skin. Given a training set of images xi and their corresponding ground-truth masks yi f ( xi ; yi ); i = 1 ; :::; N g , training a segmentation model consists of finding the model parameters GLYPH&lt;18&gt; that maximize the likelihood of observing those data:
+
+$$\theta ^ { * } = \arg \max _ { \theta } \sum _ { i = 1 } ^ { N } \log P ( y _ { i } | x _ { i } ; \theta ),$$
+
+which is performed indirectly, via the minimization of a loss function between the estimated and the true segmentation masks:
+
+$$\theta ^ { * } = \arg \min _ { \theta } \sum _ { i = 1 } ^ { N } \mathcal { L } ( \hat { y } _ { i } | y _ { i } ) = \arg \min _ { \theta } \sum _ { i = 1 } ^ { N } \mathcal { L } ( f _ { \theta } ( x _ { i } ) | y _ { i } ).$$
+
+The choice of the loss function is thus critical, as it encodes not only the main optimization objective, but also much of the prior
+
+<!-- page_break -->
+
+Fig. 8: The distribution of loss functions used by the surveyed works in DL -based skin lesion segmentation. Cross-entropy loss is the most popular loss function (96 papers), followed by Dice (53 papers) and Jaccard (19 papers) losses. Of the 177 surveyed papers, 65 use a combination of losses, with CE + Dice (27 papers) and CE + Jaccard (11 papers) being the most popular combinations.
+
+picture_counter_22 The image is a pie chart. It displays the percentage of different items. The items are: DS (5.6%), Tversky (2.1%), Focal (3.9%), Adversarial (3.0%), Tanimoto (3.0%), L2 (2.1%), L1 (4.3%), Jaccard (8.2%), Dice (22.7%), and CE (41.2%).
+
+information needed to guide the learning and constrain the search space. As can been in Table 3, many skin lesion segmentation models employ a combination of losses to enhance generalization.

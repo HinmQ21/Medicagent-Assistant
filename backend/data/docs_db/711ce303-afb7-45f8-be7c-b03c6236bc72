@@ -1,0 +1,3 @@
+## Material method
+
+This section describes the dataset, the classification algorithm (CNN) used in the study, and the transfer learning architectures VGG19, VGG16, InceptionV3, EfficientNetB4 developed based on this algorithm.

@@ -54,6 +54,22 @@ class VectorStore:
         except Exception as e:
             self.logger.error(f"Error creating collection: {e}")
             raise e
+
+    def reset_collection(self):
+        """Delete and recreate the collection to fix dimension mismatch."""
+        try:
+            # Delete existing collection if it exists
+            if self._does_collection_exist():
+                self.client.delete_collection(collection_name=self.collection_name)
+                self.logger.info(f"Deleted existing collection: {self.collection_name}")
+
+            # Recreate the collection
+            self._create_collection()
+            self.logger.info(f"Successfully reset collection: {self.collection_name}")
+
+        except Exception as e:
+            self.logger.error(f"Error resetting collection: {e}")
+            raise e
             
     def load_vectorstore(self) -> Tuple[QdrantVectorStore, LocalFileStore]:
         """
