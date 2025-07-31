@@ -65,12 +65,12 @@ export async function sendValidation(validation: string, comments: string): Prom
   return response.json();
 }
 
-export async function transcribeAudio(audio: Blob, language: string = "en-US"): Promise<{ transcript: string }> {
-  console.log(`Preparing to transcribe audio: ${audio.size} bytes, language: ${language}`);
-  
+export async function transcribeAudio(audio: Blob): Promise<{ transcript: string }> {
+  console.log(`Preparing to transcribe audio: ${audio.size} bytes (English-only)`);
+
   const formData = new FormData();
   formData.append('audio', audio);
-  formData.append('language', language);
+  // System is English-only - no language parameter needed
 
   console.log(`Sending request to ${API_BASE_URL}/api/transcribe`);
   

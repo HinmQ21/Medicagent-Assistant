@@ -139,10 +139,8 @@ def create_agent_graph():
         elif isinstance(current_input, dict):
             input_text = current_input.get("text", "")
         
-        # Detect language of user input
-        input_lang = 'en'  # Default to English
-        if input_text:
-            input_lang = detect_language(input_text)
+        # System now focuses on English only
+        input_lang = 'en'  # Always English
         
         # Check input through guardrails if text is present
         if input_text:
@@ -151,9 +149,7 @@ def create_agent_graph():
                 # If input is blocked, return early with guardrail message
                 print(f"Selected agent: INPUT GUARDRAILS, Message: ", message)
                 
-                # Translate the guardrail message if needed
-                if input_lang != 'en':
-                    message = translate_text(message, input_lang)
+                # No translation needed - system is English-only
                 
                 return {
                     **state,
@@ -249,8 +245,7 @@ def create_agent_graph():
         messages = state["messages"]
         current_input = state["current_input"]
         
-        # Get input language from state
-        input_lang = state.get("input_lang", "en")
+        # System is English-only
         
         # Get query text
         input_text = ""
@@ -327,9 +322,7 @@ def create_agent_graph():
 
         response = config.conversation.llm.invoke(conversation_prompt)
 
-        # Translate response if needed
-        if input_lang != 'en':
-            response.content = translate_text(response.content, input_lang)
+        # No translation needed - system is English-only
 
         # print("Conversation respone:", response)
 
@@ -353,8 +346,7 @@ def create_agent_graph():
         query = state["current_input"]
         rag_context_limit = config.rag.context_limit
 
-        # Get input language from state
-        input_lang = state.get("input_lang", "en")
+        # System is English-only
 
         recent_context = ""
         for msg in messages[-rag_context_limit:]:# limit controlled from config
@@ -402,9 +394,7 @@ def create_agent_graph():
 
         print(f"Insufficient info flag set to: {insufficient_info}")
 
-        # Translate response if needed
-        if input_lang != 'en' and isinstance(response_text, str):
-            response_text = translate_text(response_text, input_lang)
+        # No translation needed - system is English-only
 
         # Store RAG output ONLY if confidence is high
         if retrieval_confidence >= config.rag.min_retrieval_confidence:
@@ -432,8 +422,7 @@ def create_agent_graph():
         messages = state["messages"]
         web_search_context_limit = config.web_search.context_limit
 
-        # Get input language from state
-        input_lang = state.get("input_lang", "en")
+        # System is English-only
 
         recent_context = ""
         for msg in messages[-web_search_context_limit:]: # limit controlled from config
@@ -448,9 +437,7 @@ def create_agent_graph():
 
         processed_response = web_search_processor.process_web_search_results(query=state["current_input"], chat_history=recent_context)
 
-        # Translate response if needed
-        if input_lang != 'en':
-            processed_response.content = translate_text(processed_response.content, input_lang)
+        # No translation needed - system is English-only
         
         if state['agent_name'] != None:
             involved_agents = f"{state['agent_name']}, WEB_SEARCH_PROCESSOR_AGENT"
@@ -487,13 +474,10 @@ def create_agent_graph():
         current_input = state["current_input"]
         image_path = current_input.get("image", None)
 
-        # Get input language from state
-        input_lang = state.get("input_lang", "en")
+        # System is English-only
 
         if not image_path:
             response_text = "No image was provided for analysis. Please upload a brain MRI image."
-            if input_lang != 'en':
-                response_text = translate_text(response_text, input_lang)
             response = AIMessage(content=response_text)
             return {
                 **state,
@@ -513,8 +497,6 @@ def create_agent_graph():
             # Check if there was an error in analysis
             if 'error' in analysis_results:
                 response_text = f"Error analyzing the image: {analysis_results['error']}"
-                if input_lang != 'en':
-                    response_text = translate_text(response_text, input_lang)
                 response = AIMessage(content=response_text)
                 return {
                     **state,
@@ -549,9 +531,7 @@ def create_agent_graph():
 
 ⚠️ **Important Note**: This is an AI-assisted analysis. Please consult with a medical professional for proper diagnosis and treatment."""
 
-            # Translate the response if needed
-            if input_lang != 'en':
-                response_text = translate_text(response_text, input_lang)
+            # No translation needed - system is English-only
 
             response = AIMessage(content=response_text)
 
@@ -564,8 +544,6 @@ def create_agent_graph():
 
         except Exception as e:
             error_text = f"An error occurred while analyzing the brain MRI image: {str(e)}"
-            if input_lang != 'en':
-                error_text = translate_text(error_text, input_lang)
             error_response = AIMessage(content=error_text)
             return {
                 **state,
@@ -582,13 +560,10 @@ def create_agent_graph():
 
         print(f"Selected agent: CHEST_XRAY_AGENT")
 
-        # Get input language from state
-        input_lang = state.get("input_lang", "en")
+        # System is English-only
 
         if not image_path:
             response_text = "No image was provided for analysis. Please upload a chest X-ray image."
-            if input_lang != 'en':
-                response_text = translate_text(response_text, input_lang)
             response = AIMessage(content=response_text)
             return {
                 **state,
@@ -645,9 +620,7 @@ def create_agent_graph():
 
 ⚠️ **Next Steps**: Please upload a clearer chest X-ray image or consult with a healthcare professional for proper medical evaluation."""
 
-            # Translate response if needed
-            if input_lang != 'en':
-                response_text = translate_text(response_text, input_lang)
+            # No translation needed - system is English-only
 
             response = AIMessage(content=response_text)
 
@@ -660,8 +633,6 @@ def create_agent_graph():
 
         except Exception as e:
             error_text = f"An error occurred while analyzing the chest X-ray image: {str(e)}"
-            if input_lang != 'en':
-                error_text = translate_text(error_text, input_lang)
             error_response = AIMessage(content=error_text)
             return {
                 **state,
@@ -678,13 +649,10 @@ def create_agent_graph():
 
         print(f"Selected agent: SKIN_LESION_AGENT")
 
-        # Get input language from state
-        input_lang = state.get("input_lang", "en")
+        # System is English-only
 
         if not image_path:
             response_text = "No image was provided for analysis. Please upload a skin lesion image."
-            if input_lang != 'en':
-                response_text = translate_text(response_text, input_lang)
             response = AIMessage(content=response_text)
             return {
                 **state,
@@ -757,9 +725,7 @@ def create_agent_graph():
 
 🏥 **Next Steps**: Please consult with a dermatologist for professional evaluation, regardless of this automated analysis result."""
 
-            # Translate response if needed
-            if input_lang != 'en':
-                response_text = translate_text(response_text, input_lang)
+            # No translation needed - system is English-only
 
             response = AIMessage(content=response_text)
 
@@ -772,8 +738,6 @@ def create_agent_graph():
 
         except Exception as e:
             error_text = f"An error occurred while analyzing the skin lesion image: {str(e)}"
-            if input_lang != 'en':
-                error_text = translate_text(error_text, input_lang)
             error_response = AIMessage(content=error_text)
             return {
                 **state,
@@ -792,8 +756,7 @@ def create_agent_graph():
         """Handle human validation process."""
         print(f"Selected agent: HUMAN_VALIDATION")
         
-        # Get input language from state
-        input_lang = state.get("input_lang", "en")
+        # System is English-only
         
         # Get the original output content
         output_content = state['output'].content
@@ -801,9 +764,7 @@ def create_agent_graph():
         # Create the validation prompt
         validation_prompt = f"{output_content}\n\n**Human Validation Required:**\n- If you're a healthcare professional: Please validate the output. Select **Yes** or **No**. If No, provide comments.\n- If you're a patient: Simply click Yes to confirm."
         
-        # Translate the validation prompt if needed
-        if input_lang != 'en':
-            validation_prompt = translate_text(validation_prompt, input_lang)
+        # No translation needed - system is English-only
         
         # Create an AI message with the validation prompt
         validation_message = AIMessage(content=validation_prompt)
@@ -826,8 +787,7 @@ def create_agent_graph():
 
         output_text = output if isinstance(output, str) else output.content
         
-        # Get input language from state
-        input_lang = state.get("input_lang", "en")
+        # System is English-only
         
         # If the last message was a human validation message
         if "Human Validation Required" in output_text:
@@ -847,9 +807,7 @@ def create_agent_graph():
                 if validation_input.lower().startswith('no'):
                     fallback_message_text = "The previous medical analysis requires further review. A healthcare professional has flagged potential inaccuracies."
                     
-                    # Translate if needed
-                    if input_lang != 'en':
-                        fallback_message_text = translate_text(fallback_message_text, input_lang)
+                    # No translation needed - system is English-only
                     
                     fallback_message = AIMessage(content=fallback_message_text)
                     return {
@@ -873,9 +831,7 @@ def create_agent_graph():
         # Apply output sanitization
         sanitized_output = guardrails.check_output(output_text, input_text)
         
-        # Translate the sanitized output if needed
-        if input_lang != 'en':
-            sanitized_output = translate_text(sanitized_output, input_lang)
+        # No translation needed - system is English-only
         
         # For non-validation cases, add the sanitized output to messages
         sanitized_message = AIMessage(content=sanitized_output) if isinstance(output, AIMessage) else sanitized_output
@@ -975,76 +931,17 @@ def init_agent_state() -> AgentState:
     }
 
 
-def detect_language(text: str) -> str:
-    """
-    Detect the language of the input text using the conversation LLM.
-    
-    Args:
-        text: The text to detect language for
-        
-    Returns:
-        Language code (e.g., 'en', 'vi', etc.)
-    """
-    detection_prompt = f"""Please detect the language of the following text and respond with only the ISO 639-1 language code (e.g., 'en' for English, 'es' for Spanish, etc.):
+# Language detection and translation functions removed - system now focuses on English only
 
-    Text: {text}
-
-    Language code:"""
-
-    detected_lang = config.conversation.llm.invoke(detection_prompt)
-    return detected_lang.content.strip().lower()
-
-def translate_text(text: str, target_lang: str) -> str:
-    """
-    Translate text to the target language using the conversation LLM.
-    
-    Args:
-        text: The text to translate
-        target_lang: Target language code (e.g., 'en', 'vi')
-        
-    Returns:
-        Translated text
-    """
-    lang_names = {
-        'en': 'English',
-        'es': 'Spanish',
-        'fr': 'French',
-        'de': 'German',
-        # Add more languages as needed
-    }
-    
-    target_lang_name = lang_names.get(target_lang, target_lang)
-    
-    translation_prompt = f"""Please translate the following text to {target_lang_name}. 
-    You must maintain the exact same formatting as the original text, including:
-    - All line breaks and paragraph structures
-    - All bullet points, numbering, and lists
-    - All special characters and symbols
-    - All text emphasis (bold, italic) marked with asterisks or other markdown
-    - All headings and subheadings
-    - All technical terms and medical terminology
-    
-    Do not change or omit any information during translation. Keep markdown formatting intact.
-    If there are any medical terms that should not be translated, keep them in English.
-
-    Text to translate:
-    {text}
-
-    {target_lang_name} translation (maintaining exact formatting):"""
-
-    translated_text = config.conversation.llm.invoke(translation_prompt)
-    return translated_text.content
-
-def process_query(query: Union[str, Dict], conversation_history: List[BaseMessage] = None) -> str:
+def process_query(query: Union[str, Dict]) -> str:
     """
     Process a user query through the agent decision system.
-    
+
     Args:
         query: User input (text string or dict with text and image)
-        conversation_history: Optional list of previous messages, NOT NEEDED ANYMORE since the state saves the conversation history now
-        
+
     Returns:
-        Response from the appropriate agent
+        Response from the appropriate agent (English only)
     """
     # Initialize the graph
     graph = create_agent_graph()
@@ -1058,21 +955,8 @@ def process_query(query: Union[str, Dict], conversation_history: List[BaseMessag
     else:
         query_text = query
 
-    # Detect input language if there's text, otherwise default to English
-    input_lang = 'en'  # Default to English
-    if query_text:
-        detected_lang = detect_language(query_text)
-        # Only use detected language if not empty
-        if detected_lang and len(detected_lang) > 0:
-            input_lang = detected_lang
-        
-        # Translate input to English if it's not already English
-        if input_lang != 'en':
-            translated_query = translate_text(query_text, 'en')
-            if isinstance(query, dict):
-                query["text"] = translated_query
-            else:
-                query = translated_query
+    # System now focuses on English only - no language detection or translation needed
+    input_lang = 'en'  # Always English
     
     # Store the original language in the state
     state["input_lang"] = input_lang
@@ -1118,16 +1002,7 @@ def process_query(query: Union[str, Dict], conversation_history: List[BaseMessag
     if len(result["messages"]) > config.max_conversation_history:
         result["messages"] = result["messages"][-config.max_conversation_history:]
 
-    # Always translate messages to user's input language unless the detected language was explicitly English
-    if input_lang != 'en':
-        translated_messages = []
-        for message in result["messages"]:
-            if isinstance(message, (HumanMessage, AIMessage)):
-                translated_content = translate_text(message.content, input_lang)
-                translated_messages.append(type(message)(content=translated_content))
-            else:
-                translated_messages.append(message)
-        result["messages"] = translated_messages
+    # No translation needed - system is English-only
 
     # visualize conversation history in console
     for m in result["messages"]:

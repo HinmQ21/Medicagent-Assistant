@@ -102,7 +102,7 @@ class RAGConfig:
         self.include_sources = True  # Show links to reference documents and images along with corresponding query response
 
         # ADJUST ACCORDING TO ASSISTANT'S BEHAVIOUR BASED ON THE DATA INGESTED:
-        self.min_retrieval_confidence = 0.40  # The auto routing from RAG agent to WEB_SEARCH agent is dependent on this value
+        self.min_retrieval_confidence = 0.3  # The auto routing from RAG agent to WEB_SEARCH agent is dependent on this value
 
         self.context_limit = 20     # include last 20 messsages (10 Q&A pairs) in history
 
@@ -125,7 +125,7 @@ class SpeechConfig:
         # Azure Speech configuration
         self.azure_speech_key = os.getenv("AZURE_SPEECH_KEY")
         self.azure_speech_region = os.getenv("AZURE_SPEECH_REGION")
-        self.azure_speech_voice_name = "en-US-JennyNeural"  # English female voice
+        self.azure_speech_voice_name = "en-US-JennyNeural"  # English-only voice (system no longer supports multilingual)
 
 class ValidationConfig:
     def __init__(self):

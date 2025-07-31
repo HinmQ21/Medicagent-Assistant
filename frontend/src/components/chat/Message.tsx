@@ -4,7 +4,7 @@ import { Message as MessageType } from '@/types/chat';
 import { Card } from '@/components/ui/card';
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Mic, MicOff, Play, X, Globe } from 'lucide-react';
+import { Mic, MicOff, Play, X } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { generateSpeech } from '@/lib/api';
 import { marked } from 'marked';
@@ -17,7 +17,7 @@ interface MessageProps {
 export function Message({ message, onValidation }: MessageProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [language, setLanguage] = useState<string>("en-US"); // Default to English
+  // System is now English-only
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [validationComments, setValidationComments] = useState('');
 
@@ -73,15 +73,12 @@ export function Message({ message, onValidation }: MessageProps) {
       // Additional check to prevent lone punctuation
       if (cleanedText.trim().length < 2 || /^[,.?!;:]$/.test(cleanedText.trim())) {
         console.warn("Text too short or just punctuation, adding default message");
-        cleanedText = language === "en-US"
-          ? "Sorry, this text cannot be spoken."
-          : "Xin lỗi, không thể phát âm đoạn văn bản này.";
+        cleanedText = "Sorry, this text cannot be spoken.";
       }
       
       try {
         const audioBlob = await generateSpeech({
-          text: cleanedText,
-          language: language
+          text: cleanedText
         });
         
         // Check if we received a valid audio blob
@@ -117,9 +114,7 @@ export function Message({ message, onValidation }: MessageProps) {
       } catch (error) {
         console.error('Failed to generate or play speech:', error);
         // Show a user-friendly error message
-        alert(language === "en-US"
-          ? "Unable to speak this text."
-          : "Không thể phát âm đoạn văn bản này.");
+        alert("Unable to speak this text.");
       }
     } catch (error) {
       console.error('Failed to generate speech:', error);
@@ -153,9 +148,7 @@ export function Message({ message, onValidation }: MessageProps) {
     }
   };
 
-  const toggleLanguage = () => {
-    setLanguage(prev => prev === "en-US" ? "vi-VN" : "en-US");
-  };
+  // Language toggle removed - system is English-only
 
   // Configure marked options for better table rendering
   marked.setOptions({
@@ -298,23 +291,13 @@ export function Message({ message, onValidation }: MessageProps) {
                 <X className="h-4 w-4" />
               </Button>
             )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={toggleLanguage}
-              title={language === "en-US" ? "Currently English, click for Vietnamese" : "Currently Vietnamese, click for English"}
-              className="ml-1"
-            >
-              <Globe className="h-4 w-4" />
-              <span className="ml-1 text-xs">{language === "en-US" ? "EN" : "VI"}</span>
-            </Button>
+            {/* Language toggle removed - system is English-only */}
           </div>
         )}
         
         {message.agent?.includes('HUMAN_VALIDATION') && onValidation && (
           <div className="mt-4 space-y-2">
             <div className="text-sm font-medium">Do you agree with this result?</div>
-            <div className="text-sm font-medium">Bạn có đồng ý với kết quả này không?</div>
             <div className="flex gap-2">
               <Button
                 variant="outline"

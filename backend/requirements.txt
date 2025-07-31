@@ -110,7 +110,7 @@ langchain-core==0.3.44
 langchain-google-genai==2.0.8
 langchain-qdrant==0.2.0
 langchain-text-splitters==0.3.6
-langdetect==1.0.9
+# langdetect removed - system is now English-only
 langgraph==0.3.9
 langgraph-checkpoint==2.0.19
 langgraph-prebuilt==0.1.3

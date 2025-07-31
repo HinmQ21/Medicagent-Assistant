@@ -80,7 +80,7 @@ class QueryRequest(BaseModel):
 class SpeechRequest(BaseModel):
     text: str
     voice_id: Optional[str] = None
-    language: Optional[str] = "en-US"  # Default to English
+    # System is now English-only
 
 @app.get("/health")
 def health_check():
@@ -238,7 +238,7 @@ def validate_medical_output(
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/transcribe")
-async def transcribe_audio(audio: UploadFile = File(...), language: str = Form("en-US")):
+async def transcribe_audio(audio: UploadFile = File(...)):
     """Endpoint to transcribe speech using Azure Speech-to-Text API"""
     if not audio.filename:
         return JSONResponse(
@@ -285,9 +285,9 @@ async def transcribe_audio(audio: UploadFile = File(...), language: str = Form("
                 "Content-Type": "audio/mpeg"
             }
             
-            # Use the provided language or default to English
+            # System is English-only
             params = {
-                "language": language,
+                "language": "en-US",
                 "format": "detailed"
             }
             
@@ -341,7 +341,8 @@ async def generate_speech(request: SpeechRequest):
     """Endpoint to generate speech using Azure Text-to-Speech API"""
     try:
         text = request.text
-        language = request.language or "en-US"  # Default to English if not provided
+        # System is English-only
+        language = "en-US"
         
         if not text:
             return JSONResponse(
@@ -357,14 +358,12 @@ async def generate_speech(request: SpeechRequest):
             "X-Microsoft-OutputFormat": "audio-16khz-128kbitrate-mono-mp3"
         }
         
-        # Voice selection based on language
-        voice_name = config.speech.azure_speech_voice_name
-        if language == "en-US":
-            voice_name = "en-US-JennyNeural"  # Default English voice
+        # System is English-only
+        voice_name = "en-US-JennyNeural"  # English voice
         
-        # Create SSML with the appropriate language
+        # Create SSML for English
         ssml = f"""
-        <speak version='1.0' xml:lang='{language}'>
+        <speak version='1.0' xml:lang='en-US'>
             <voice name='{voice_name}'>
                 <prosody rate="1.2">
                     {text}

@@ -22,5 +22,5 @@ export interface ValidationResponse {
 export interface SpeechRequest {
   text: string;
   voice_id?: string;
-  language?: string;
-} 
+  // System is English-only - language parameter removed
+}
