@@ -43,8 +43,8 @@ export function Message({ message, onValidation }: MessageProps) {
           .replace(/\n{2,}/g, '\n') // Replace multiple newlines with single
           .trim();
           
-        // Handle special cases for Vietnamese punctuation
-        // Sometimes "Phẩy" might be a result of a punctuation mark being treated as a word
+        // Handle special cases for punctuation formatting
+        // Clean up spacing around punctuation marks
         cleaned = cleaned
           .replace(/\s+\,/g, ',') // Remove space before comma
           .replace(/\s+\./g, '.') // Remove space before period
@@ -57,10 +57,9 @@ export function Message({ message, onValidation }: MessageProps) {
           .replace(/\s+\;/g, ';') // Remove space before semicolon
           .replace(/\;\s+/g, '; '); // Ensure space after semicolon
           
-        // Check if the text is just "Phẩy" or starts with it
-        if (cleaned === "Phẩy" || cleaned === "phẩy" || 
-            cleaned.startsWith("Phẩy,") || cleaned.startsWith("phẩy,")) {
-          console.warn("Detected standalone 'Phẩy' in text, might be a TTS issue");
+        // Check for problematic punctuation-only content
+        if (cleaned.trim().length < 2 || /^[,.?!;:]+$/.test(cleaned.trim())) {
+          console.warn("Detected punctuation-only content, might be a TTS issue");
         }
           
         return cleaned;
@@ -304,14 +303,14 @@ export function Message({ message, onValidation }: MessageProps) {
                 size="sm"
                 onClick={() => handleValidation('yes')}
               >
-                Yes/Có
+                Yes
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => handleValidation('no')}
               >
-                No/Không
+                No
               </Button>
             </div>
             <textarea

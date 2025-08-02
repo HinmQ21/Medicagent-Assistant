@@ -13,7 +13,7 @@ export function Chat() {
   const [messages, setMessages] = useState<MessageType[]>([
     {
       role: 'assistant',
-      content: "Chào bạn, tôi là hệ thống Medicagent. Tôi có chuyên môn trong 3 lĩnh vực chính: Khối u não, X-quang ngực, và phân vùng tổn thương da. Tuy nhiên, tôi chỉ đóng vai trò hỗ trợ và không thể thay thế được các chuyên gia y tế. Nếu có câu hỏi hoặc cần chẩn đoán, hãy gửi thông tin nhé, tôi sẽ giúp bạn tìm kiếm thông tin chính xác nhất!",
+      content: "Hello, I am the Medicagent system. I specialize in 3 main areas: Brain tumors, Chest X-rays, and Skin lesion segmentation. However, I only serve as a support tool and cannot replace medical professionals. If you have questions or need diagnosis assistance, please send your information and I will help you find the most accurate information!",
     },
   ]);
   const [input, setInput] = useState('');
@@ -152,7 +152,7 @@ export function Chat() {
     setMessages([
       {
         role: 'system',
-        content: "Xin chào, hãy tiếp tục với Medicagent nhé!",
+        content: "Hello, let's continue with Medicagent!",
       },
     ]);
   };
@@ -170,7 +170,7 @@ export function Chat() {
           <div className="bg-[#F4F6F8]/50 p-2 rounded-md">
             <h3 className="font-medium mb-1 flex items-center gap-2 text-[#2A9DF4] text-sm">
               <i className="fas fa-comment-medical" />
-              Tác vụ hội thoại
+              Conversation Tasks
             </h3>
             <ul className="text-xs space-y-1">
               <li className="flex flex-col gap-1 hover:text-[#2A9DF4] transition-colors p-1">
@@ -179,7 +179,7 @@ export function Chat() {
                   Conversation Agent
                 </div>
                 <div className="pl-5 text-[10px] text-gray-600">
-                  <p>Hội thoại chung</p>
+                  <p>General conversation</p>
                 </div>
               </li>
               <li className="flex flex-col gap-1 hover:text-[#2A9DF4] transition-colors p-1">
@@ -188,11 +188,11 @@ export function Chat() {
                   Medical RAG Agent
                 </div>
                 <div className="pl-5 text-[10px] text-gray-600">
-                  <p>Truy xuất thông tin y khoa: </p>
-                  <p>• Phân tích PDF dựa trên Docling</p>
-                  <p>• Nhúng nội dung định dạng markdown</p>
-                  <p>• Phân đoạn ngữ nghĩa dựa trên LLM</p>
-                  <p>• Tìm kiếm lai Qdrant Vector DB</p>
+                  <p>Medical information retrieval: </p>
+                  <p>• PDF analysis based on Docling</p>
+                  <p>• Markdown content embedding</p>
+                  <p>• LLM-based semantic segmentation</p>
+                  <p>• Qdrant Vector DB hybrid search</p>
                 </div>
               </li>
               <li className="flex flex-col gap-1 hover:text-[#2A9DF4] transition-colors p-1">
@@ -201,9 +201,9 @@ export function Chat() {
                   Web Search Agent
                 </div>
                 <div className="pl-5 text-[10px] text-gray-600">
-                  <p>Tìm kiếm thông tin: </p>
-                  <p>• PubMed Search: nghiên cứu y học</p>
-                  <p>• Tavily Search: tìm kiếm đa nguồn</p>
+                  <p>Information search: </p>
+                  <p>• PubMed Search: medical research</p>
+                  <p>• Tavily Search: multi-source search</p>
                 </div>
               </li>
             </ul>
@@ -213,7 +213,7 @@ export function Chat() {
           <div className="bg-[#F4F6F8]/50 p-2 rounded-md">
             <h3 className="font-medium mb-1 flex items-center gap-2 text-[#2A9DF4] text-sm">
               <i className="fas fa-camera" />
-              Tác vụ thị giác máy tính
+              Computer Vision Tasks
             </h3>
             <ul className="text-xs space-y-1">
               <li className="flex flex-col gap-1 hover:text-[#2A9DF4] transition-colors p-1">
@@ -222,7 +222,7 @@ export function Chat() {
                   Brain Tumor Agent
                 </div>
                 <div className="pl-5 text-[10px] text-gray-600">
-                  <p>• Phân loại hình ảnh MRI não</p>
+                  <p>• Brain MRI image classification</p>
                   <p>• Accuracy: 97.56%</p>
                 </div>
               </li>
@@ -232,7 +232,7 @@ export function Chat() {
                   Chest Xray Agent
                 </div>
                 <div className="pl-5 text-[10px] text-gray-600">
-                  <p>• Nhận diện Covid-19 từ X-quang</p>
+                  <p>• Covid-19 detection from X-ray</p>
                   <p>• Accuracy: 97%</p>
                 </div>
               </li>
@@ -242,7 +242,7 @@ export function Chat() {
                   Skin Lesion Agent
                 </div>
                 <div className="pl-5 text-[10px] text-gray-600">
-                  <p>• Phân vùng tổn thương da</p>
+                  <p>• Skin lesion segmentation</p>
                   <p>• Dice Score: 0.784</p>
                 </div>
               </li>
@@ -255,7 +255,7 @@ export function Chat() {
           onClick={clearChat}
         >
           <Trash2 className="h-3.5 w-3.5 mr-2" />
-          Xóa Cuộc Hội Thoại
+          Clear Conversation
         </Button>
       </Card>
 
@@ -332,7 +332,7 @@ export function Chat() {
             <Textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Nhập câu hỏi..."
+              placeholder="Enter your question..."
               className="flex-1 border-[#2A9DF4] focus-visible:ring-[#2A9DF4] rounded-md resize-none h-9 min-h-[36px] py-2 px-3"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
