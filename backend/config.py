@@ -120,12 +120,52 @@ class MedicalCVConfig:
 
 class SpeechConfig:
     def __init__(self):
-        self.eleven_labs_api_key = os.getenv("ELEVEN_LABS_API_KEY")  # Replace with your actual key
+        # ElevenLabs configuration
+        self.eleven_labs_api_key = os.getenv("ELEVEN_LABS_API_KEY")
         self.eleven_labs_voice_id = "21m00Tcm4TlvDq8ikWAM"    # Default voice ID (Rachel)
-        # Azure Speech configuration
+        self.eleven_labs_model_id = "eleven_monolingual_v1"    # Default model
+
+        # ElevenLabs voice settings
+        self.eleven_labs_voice_settings = {
+            "stability": 0.5,           # Voice stability (0.0 to 1.0)
+            "similarity_boost": 0.75,   # Voice similarity boost (0.0 to 1.0)
+            "style": 0.0,              # Voice style (0.0 to 1.0)
+            "use_speaker_boost": True   # Use speaker boost
+        }
+
+        # Available ElevenLabs voices (popular ones)
+        self.eleven_labs_voices = {
+            "rachel": "21m00Tcm4TlvDq8ikWAM",      # Rachel (default)
+            "drew": "29vD33N1CtxCmqQRPOHJ",        # Drew
+            "clyde": "2EiwWnXFnvU5JabPnv8n",       # Clyde
+            "paul": "5Q0t7uMcjvnagumLfvZi",        # Paul
+            "domi": "AZnzlk1XvdvUeBnXmlld",        # Domi
+            "dave": "CYw3kZ02Hs0563khs1Fj",        # Dave
+            "fin": "D38z5RcWu1voky8WS1ja",         # Fin
+            "sarah": "EXAVITQu4vr4xnSDxMaL",       # Sarah
+            "antoni": "ErXwobaYiN019PkySvjV",      # Antoni
+            "thomas": "GBv7mTt0atIp3Br8iCZE",      # Thomas
+            "charlie": "IKne3meq5aSn9XLyUdCD",     # Charlie
+            "emily": "LcfcDJNUP1GQjkzn1xUU",       # Emily
+            "elli": "MF3mGyEYCl7XYWbV9V6O",        # Elli
+            "callum": "N2lVS1w4EtoT3dr4eOWO",      # Callum
+            "patrick": "ODq5zmih8GrVes37Dizd",     # Patrick
+            "harry": "SOYHLrjzK2X1ezoPC6cr",       # Harry
+            "liam": "TX3LPaxmHKxFdv7VOQHJ",        # Liam
+            "dorothy": "ThT5KcBeYPX3keUQqHPh",     # Dorothy
+            "josh": "TxGEqnHWrfWFTfGW9XjX",        # Josh
+            "arnold": "VR6AewLTigWG4xSOukaG",      # Arnold
+            "adam": "pNInz6obpgDQGcFmaJgB",        # Adam
+            "sam": "yoZ06aMxZJJ28mfd3POQ"          # Sam
+        }
+
+        # TTS provider selection
+        self.tts_provider = "elevenlabs"  # "elevenlabs" or "azure"
+
+        # Azure Speech configuration (kept for backward compatibility)
         self.azure_speech_key = os.getenv("AZURE_SPEECH_KEY")
         self.azure_speech_region = os.getenv("AZURE_SPEECH_REGION")
-        self.azure_speech_voice_name = "en-US-JennyNeural"  # English-only voice (system no longer supports multilingual)
+        self.azure_speech_voice_name = "en-US-JennyNeural"  # English-only voice
 
 class ValidationConfig:
     def __init__(self):

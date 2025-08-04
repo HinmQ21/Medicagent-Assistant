@@ -20,6 +20,7 @@ from pydub import AudioSegment
 
 from config import Config
 from agents.agent_decision import process_query
+from services.elevenlabs_tts import ElevenLabsTTS
 
 # Load configuration
 config = Config()
@@ -338,54 +339,46 @@ async def transcribe_audio(audio: UploadFile = File(...)):
 
 @app.post("/api/generate-speech")
 async def generate_speech(request: SpeechRequest):
-    """Endpoint to generate speech using Azure Text-to-Speech API"""
+    """Endpoint to generate speech using ElevenLabs Text-to-Speech API"""
     try:
         text = request.text
-        # System is English-only
-        language = "en-US"
-        
+
         if not text:
             return JSONResponse(
                 status_code=400,
                 content={"error": "Text is required"}
             )
-        
-        # Define API request to Azure Speech API
-        azure_url = f"https://{config.speech.azure_speech_region}.tts.speech.microsoft.com/cognitiveservices/v1"
-        headers = {
-            "Ocp-Apim-Subscription-Key": config.speech.azure_speech_key,
-            "Content-Type": "application/ssml+xml",
-            "X-Microsoft-OutputFormat": "audio-16khz-128kbitrate-mono-mp3"
-        }
-        
-        # System is English-only
-        voice_name = "en-US-JennyNeural"  # English voice
-        
-        # Create SSML for English
-        ssml = f"""
-        <speak version='1.0' xml:lang='en-US'>
-            <voice name='{voice_name}'>
-                <prosody rate="1.2">
-                    {text}
-                </prosody>
-            </voice>
-        </speak>
-        """
 
-        # Send request to Azure Speech API
-        response = requests.post(azure_url, headers=headers, data=ssml.encode('utf-8'))
-
-        if response.status_code != 200:
+        # Check if ElevenLabs API key is configured
+        if not config.speech.eleven_labs_api_key:
             return JSONResponse(
                 status_code=500,
-                content={"error": f"Failed to generate speech, status: {response.status_code}", "details": response.text}
+                content={"error": "ElevenLabs API key not configured"}
             )
-        
+
+        # Initialize ElevenLabs TTS service
+        tts_service = ElevenLabsTTS(
+            api_key=config.speech.eleven_labs_api_key,
+            voice_id=config.speech.eleven_labs_voice_id
+        )
+
+        # Use voice_id from request if provided, otherwise use default
+        voice_id = request.voice_id or config.speech.eleven_labs_voice_id
+
+        # Generate speech using ElevenLabs
+        audio_data = tts_service.generate_speech(
+            text=text,
+            voice_id=voice_id,
+            model_id=config.speech.eleven_labs_model_id,
+            voice_settings=config.speech.eleven_labs_voice_settings
+        )
+
         # Save the audio file temporarily
         os.makedirs(SPEECH_DIR, exist_ok=True)
         temp_audio_path = f"./{SPEECH_DIR}/{uuid.uuid4()}.mp3"
+
         with open(temp_audio_path, "wb") as f:
-            f.write(response.content)
+            f.write(audio_data)
 
         # Return the generated audio file
         return FileResponse(
@@ -394,10 +387,38 @@ async def generate_speech(request: SpeechRequest):
             filename="generated_speech.mp3"
         )
 
+    except ValueError as e:
+        return JSONResponse(
+            status_code=400,
+            content={"error": str(e)}
+        )
     except Exception as e:
         return JSONResponse(
             status_code=500,
-            content={"error": str(e)}
+            content={"error": f"Failed to generate speech: {str(e)}"}
+        )
+
+@app.get("/api/voices")
+async def get_available_voices():
+    """Endpoint to get available ElevenLabs voices"""
+    try:
+        if not config.speech.eleven_labs_api_key:
+            return JSONResponse(
+                status_code=500,
+                content={"error": "ElevenLabs API key not configured"}
+            )
+
+        # Return predefined voices from config
+        return {
+            "voices": config.speech.eleven_labs_voices,
+            "default_voice": config.speech.eleven_labs_voice_id,
+            "current_settings": config.speech.eleven_labs_voice_settings
+        }
+
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Failed to get voices: {str(e)}"}
         )
 
 # Add exception handler for request entity too large
