@@ -121,6 +121,14 @@ def chat(
             else:
                 print("Skin Lesion Output path does not exist.")
         
+        # If it's the bone fracture detection agent, check for output image
+        elif response_data["agent_name"] == "BONE_FRACTURE_AGENT, HUMAN_VALIDATION":
+            bone_fracture_path = os.path.join("uploads/bone_fracture_output", "detection_plot.png")
+            if os.path.exists(bone_fracture_path):
+                result["result_image"] = f"{config.api.base_url}/uploads/bone_fracture_output/detection_plot.png"
+            else:
+                print("Bone Fracture Output path does not exist.")
+        
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -188,6 +196,14 @@ async def upload_image(
                 result["result_image"] = f"{config.api.base_url}/uploads/skin_lesion_output/segmentation_plot.png"
             else:
                 print("Skin Lesion Output path does not exist.")
+        
+        # If it's the bone fracture detection agent, check for output image  
+        elif response_data["agent_name"] == "BONE_FRACTURE_AGENT, HUMAN_VALIDATION":
+            bone_fracture_path = os.path.join("uploads/bone_fracture_output", "detection_plot.png")
+            if os.path.exists(bone_fracture_path):
+                result["result_image"] = f"{config.api.base_url}/uploads/bone_fracture_output/detection_plot.png"
+            else:
+                print("Bone Fracture Output path does not exist.")
         
         # Remove temporary file after sending
         try:

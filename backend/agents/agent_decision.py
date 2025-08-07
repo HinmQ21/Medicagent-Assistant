@@ -63,6 +63,7 @@ class AgentConfig:
     4. BRAIN_TUMOR_AGENT - For analysis of brain MRI images to detect and segment tumors.
     5. CHEST_XRAY_AGENT - For analysis of chest X-ray images to detect abnormalities.
     6. SKIN_LESION_AGENT - For analysis of skin lesion images to classify them as benign or malignant.
+    7. BONE_FRACTURE_AGENT - For analysis of X-ray images to detect bone fractures and injuries.
 
     Make your decision based on these guidelines:
     - If the user has not uploaded any image, always route to the conversation agent.
@@ -746,6 +747,122 @@ def create_agent_graph():
                 "agent_name": "SKIN_LESION_AGENT"
             }
     
+    def run_bone_fracture_agent(state: AgentState) -> AgentState:
+        """Handle bone fracture detection in X-ray images."""
+        
+        current_input = state["current_input"]
+        image_path = current_input.get("image", None)
+        
+        print(f"Selected agent: BONE_FRACTURE_AGENT")
+        
+        # System is English-only
+        
+        if not image_path:
+            response_text = "No image was provided for analysis. Please upload an X-ray image for bone fracture detection."
+            response = AIMessage(content=response_text)
+            return {
+                **state,
+                "output": response,
+                "needs_human_validation": False,
+                "agent_name": "BONE_FRACTURE_AGENT"
+            }
+        
+        try:
+            # Perform bone fracture detection
+            detection_result = AgentConfig.image_analyzer.detect_bone_fracture(image_path)
+            
+            if detection_result['detections_found']:
+                detection_count = detection_result['detection_count']
+                avg_confidence = detection_result['average_confidence']
+                
+                response_text = f"""Bone & Medical Anomaly Detection Results:
+                
+🔍 **Detection Status**: MEDICAL ANOMALIES DETECTED
+📊 **Analysis Type**: Automated medical abnormality detection using YOLOv8 deep learning model
+📝 **Output**: X-ray image with detected anomalies highlighted in color-coded bounding boxes
+
+🎯 **Detection Summary**:
+- **Number of Anomalies Detected**: {detection_count}
+- **Average Detection Confidence**: {avg_confidence:.2f} ({avg_confidence*100:.1f}%)
+- **Model Type**: YOLOv8 trained on GRAZPEDWRI-DX pediatric wrist trauma dataset
+- **Detection Threshold**: 25% confidence minimum
+- **Detectable Classes**: Fractures, bone anomalies, lesions, foreign bodies, metal objects, soft tissue abnormalities
+
+📋 **Clinical Analysis**:
+- **Multi-Class Detection**: Color-coded bounding boxes indicate different types of detected anomalies
+- **Confidence Scores**: Each detection includes a confidence percentage  
+- **Spatial Mapping**: Precise coordinates of suspected medical anomalies
+- **Classification**: Distinguishes between fractures, bone anomalies, lesions, foreign bodies, and other medical conditions
+- **Documentation**: Annotated image available for medical reference
+
+⚠️ **Important Medical Disclaimer**:
+- This is an AI-assisted **detection tool**, NOT a diagnostic system
+- AI detection does **NOT** replace clinical judgment or radiological interpretation
+- False positives and false negatives are possible with any automated system
+- This analysis **CANNOT** replace proper medical evaluation by qualified healthcare professionals
+- Any suspected fractures require immediate evaluation by a radiologist or orthopedic specialist
+
+🏥 **Recommended Next Steps**:
+- Consult an orthopedic specialist or radiologist for professional interpretation
+- Consider additional imaging (CT, MRI) if clinically indicated
+- Seek immediate medical attention for severe trauma or suspected displaced fractures
+- Use this AI analysis as a supplementary tool alongside clinical assessment
+- Document findings and compare with clinical examination
+
+📸 **Annotated Image**: The processed X-ray with detected fracture locations is available for download and clinical reference."""
+            else:
+                response_text = f"""Bone & Medical Anomaly Detection Results:
+
+🔍 **Detection Status**: NO MEDICAL ANOMALIES DETECTED
+📊 **Analysis Type**: Automated medical abnormality detection using YOLOv8 deep learning model
+📝 **Output**: X-ray image analyzed with no significant abnormalities identified
+
+🎯 **Analysis Summary**:
+- **Medical Anomalies Detected**: None
+- **Model Type**: YOLOv8 trained on GRAZPEDWRI-DX pediatric wrist trauma dataset
+- **Detection Threshold**: 25% confidence minimum
+- **Image Quality**: Successfully processed and analyzed
+- **Scanned For**: Fractures, bone anomalies, lesions, foreign bodies, metal objects, soft tissue abnormalities
+
+📋 **Clinical Interpretation**:
+- **No Obvious Abnormalities**: AI model did not detect significant medical anomalies above threshold
+- **Image Analysis**: Complete X-ray examination performed
+- **Documentation**: Processed image available for medical reference
+
+⚠️ **Important Medical Disclaimer**:
+- **Absence of AI detection does NOT rule out fractures**
+- Subtle, hairline, or stress fractures may not be detected by AI
+- Clinical symptoms and examination findings remain paramount
+- Some fracture types may require specialized imaging or expert interpretation
+- This analysis **CANNOT** replace professional radiological evaluation
+
+🏥 **Recommended Next Steps**:
+- Clinical correlation with patient symptoms and physical examination
+- Consider radiologist review if clinical suspicion remains high
+- Follow-up imaging may be needed if symptoms persist
+- Seek medical attention for continued pain, swelling, or functional impairment
+- Use this AI analysis as a supplementary screening tool only
+
+📸 **Processed Image**: The analyzed X-ray image is available for clinical reference."""
+            
+            response = AIMessage(content=response_text)
+            return {
+                **state,
+                "output": response,
+                "needs_human_validation": True,  # Medical diagnosis always needs validation
+                "agent_name": "BONE_FRACTURE_AGENT"
+            }
+            
+        except Exception as e:
+            logger.error(f"Error in bone fracture detection: {e}")
+            error_response = AIMessage(content=f"Error during bone fracture analysis: {str(e)}. Please try again or consult a medical professional.")
+            return {
+                **state,
+                "output": error_response,
+                "needs_human_validation": False,
+                "agent_name": "BONE_FRACTURE_AGENT"
+            }
+    
     def handle_human_validation(state: AgentState) -> Dict:
         """Prepare for human validation if needed."""
         if state.get("needs_human_validation", False):
@@ -855,6 +972,7 @@ def create_agent_graph():
     workflow.add_node("BRAIN_TUMOR_AGENT", run_brain_tumor_agent)
     workflow.add_node("CHEST_XRAY_AGENT", run_chest_xray_agent)
     workflow.add_node("SKIN_LESION_AGENT", run_skin_lesion_agent)
+    workflow.add_node("BONE_FRACTURE_AGENT", run_bone_fracture_agent)
     workflow.add_node("check_validation", handle_human_validation)
     workflow.add_node("human_validation", perform_human_validation)
     workflow.add_node("apply_guardrails", apply_output_guardrails)
@@ -883,6 +1001,7 @@ def create_agent_graph():
             "BRAIN_TUMOR_AGENT": "BRAIN_TUMOR_AGENT",
             "CHEST_XRAY_AGENT": "CHEST_XRAY_AGENT",
             "SKIN_LESION_AGENT": "SKIN_LESION_AGENT",
+            "BONE_FRACTURE_AGENT": "BONE_FRACTURE_AGENT",
             "needs_validation": "RAG_AGENT"  # Default to RAG if confidence is low
         }
     )
@@ -895,6 +1014,7 @@ def create_agent_graph():
     workflow.add_edge("BRAIN_TUMOR_AGENT", "check_validation")
     workflow.add_edge("CHEST_XRAY_AGENT", "check_validation")
     workflow.add_edge("SKIN_LESION_AGENT", "check_validation")
+    workflow.add_edge("BONE_FRACTURE_AGENT", "check_validation")
 
     workflow.add_edge("human_validation", "apply_guardrails")
     workflow.add_edge("apply_guardrails", END)

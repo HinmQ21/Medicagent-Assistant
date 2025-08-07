@@ -112,6 +112,8 @@ class MedicalCVConfig:
         self.chest_xray_model_path = "./agents/image_analysis_agent/chest_xray_agent/models/covid_chest_xray_model.pth"
         self.skin_lesion_model_path = "./agents/image_analysis_agent/skin_lesion_agent/models/checkpointN25_.pth.tar"
         self.skin_lesion_segmentation_output_path = "./uploads/skin_lesion_output/segmentation_plot.png"
+        self.bone_fracture_model_path = "./agents/image_analysis_agent/bone_fracture_agent/models/bone_fracture_yolov8.pt"
+        self.bone_fracture_output_path = "./uploads/bone_fracture_output/detection_plot.png"
         self.llm = ChatGoogleGenerativeAI(
             model=MODEL_CHAT,
             google_api_key=os.getenv("GOOGLE_API_KEY"),
@@ -173,9 +175,10 @@ class ValidationConfig:
             "CONVERSATION_AGENT": False,
             "RAG_AGENT": False,
             "WEB_SEARCH_AGENT": False,
-            "BRAIN_TUMOR_AGENT": True,
-            "CHEST_XRAY_AGENT": True,
-            "SKIN_LESION_AGENT": True
+                    "BRAIN_TUMOR_AGENT": True,
+        "CHEST_XRAY_AGENT": True,
+        "SKIN_LESION_AGENT": True,
+        "BONE_FRACTURE_AGENT": True
         }
         self.validation_timeout = 300
         self.default_action = "reject"
