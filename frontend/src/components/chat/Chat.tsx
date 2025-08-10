@@ -13,7 +13,7 @@ export function Chat() {
   const [messages, setMessages] = useState<MessageType[]>([
     {
       role: 'assistant',
-      content: "Hello, I am the Medicagent system. I specialize in 3 main areas: Brain tumors, Chest X-rays, and Skin lesion segmentation. However, I only serve as a support tool and cannot replace medical professionals. If you have questions or need diagnosis assistance, please send your information and I will help you find the most accurate information!",
+      content: "Hello, I am the Medicagent system. I specialize in 5 main areas: Brain tumors, Chest X-rays for Covid19, Chest X-rays for pneumonia, Bone fractures, and Skin lesion segmentation. However, I only serve as a support tool and cannot replace medical professionals. If you have questions or need diagnosis assistance, please send your information and I will help you find the most accurate information!",
     },
   ]);
   const [input, setInput] = useState('');
@@ -208,8 +208,8 @@ export function Chat() {
               </li>
             </ul>
           </div>
-
-          {/* Tác vụ thị giác máy tính */}
+{/* 
+          Tác vụ thị giác máy tính
           <div className="bg-[#F4F6F8]/50 p-2 rounded-md">
             <h3 className="font-medium mb-1 flex items-center gap-2 text-[#2A9DF4] text-sm">
               <i className="fas fa-camera" />
@@ -247,7 +247,75 @@ export function Chat() {
                 </div>
               </li>
             </ul>
+          </div> */}
+
+          {/* Tác vụ thị giác máy tính */}
+          <div className="bg-[#F4F6F8]/50 p-2 rounded-md">
+            <h3 className="font-medium mb-1 flex items-center gap-2 text-[#2A9DF4] text-sm">
+              <i className="fas fa-camera" />
+              Computer Vision Tasks
+            </h3>
+            <ul className="text-xs space-y-1">
+              <li className="flex flex-col gap-1 hover:text-[#2A9DF4] transition-colors p-1">
+                <div className="flex items-center gap-2">
+                  <i className="fas fa-brain" />
+                  Brain Tumor Agent
+                </div>
+                <div className="pl-5 text-[10px] text-gray-600">
+                  <p>• Brain MRI image classification</p>
+                  <p>• Accuracy: 97.56%</p>
+                  <p>• Dataset: BraTS</p>
+                </div>
+              </li>
+              <li className="flex flex-col gap-1 hover:text-[#2A9DF4] transition-colors p-1">
+                <div className="flex items-center gap-2">
+                  <i className="fas fa-lungs" />
+                  Chest Xray Agent
+                </div>
+                <div className="pl-5 text-[10px] text-gray-600">
+                  <p>• Covid-19 detection from X-ray</p>
+                  <p>• Accuracy: 97%</p>
+                  <p>• Datasets: COVIDx, CheXpert, ChestX-ray14</p>
+                </div>
+              </li>
+              <li className="flex flex-col gap-1 hover:text-[#2A9DF4] transition-colors p-1">
+                <div className="flex items-center gap-2">
+                  <i className="fas fa-allergies" />
+                  Skin Lesion Agent
+                </div>
+                <div className="pl-5 text-[10px] text-gray-600">
+                  <p>• Skin lesion segmentation</p>
+                  <p>• Dice Score: 0.784</p>
+                  <p>• Dataset: ISIC2018</p>
+                </div>
+              </li>
+              <li className="flex flex-col gap-1 hover:text-[#2A9DF4] transition-colors p-1">
+                <div className="flex items-center gap-2">
+                  <i className="fas fa-bone" />
+                  Bone Fracture Agent
+                </div>
+                <div className="pl-5 text-[10px] text-gray-600">
+                  <p>• Bone fracture localization</p>
+                  <p>• Dataset: GRAZPEDWRI-DX</p>
+                  <p>• Model: YOLOv8</p>
+                  <p>• mAP: 0.63</p>
+                </div>
+              </li>
+              <li className="flex flex-col gap-1 hover:text-[#2A9DF4] transition-colors p-1">
+                <div className="flex items-center gap-2">
+                  <i className="fas fa-virus" />
+                  Pneumonia Detection Agent
+                </div>
+                <div className="pl-5 text-[10px] text-gray-600">
+                  <p>• Pneumonia classification from X-ray</p>
+                  <p>• Dataset: Chest X-Ray Images (Kaggle)</p>
+                  <p>• Model: ResNet18</p>
+                  <p>• Accuracy: 92%</p>
+                </div>
+              </li>
+            </ul>
           </div>
+
         </div>
 
         <Button

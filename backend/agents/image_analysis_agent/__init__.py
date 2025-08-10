@@ -3,6 +3,7 @@ from .chest_xray_agent.covid_chest_xray_inference import ChestXRayClassification
 # from .brain_tumor_agent.brain_tumor_inference import BrainTumorAgent
 from .skin_lesion_agent.skin_lesion_inference import SkinLesionSegmentation
 from .bone_fracture_agent.bone_fracture_inference import BoneFractureDetection
+from .pneumonia_agent.pneumonia_inference import PneumoniaClassifier
 
 class ImageAnalysisAgent:
     """
@@ -17,6 +18,7 @@ class ImageAnalysisAgent:
         self.skin_lesion_segmentation_output_path = config.medical_cv.skin_lesion_segmentation_output_path
         self.bone_fracture_agent = BoneFractureDetection(model_path=config.medical_cv.bone_fracture_model_path)
         self.bone_fracture_output_path = config.medical_cv.bone_fracture_output_path
+        self.pneumonia_agent = PneumoniaClassifier(model_path=config.medical_cv.pneumonia_model_path)
     
     # classify image
     def analyze_image(self, image_path: str) -> str:
@@ -38,3 +40,7 @@ class ImageAnalysisAgent:
     # bone fracture agent
     def detect_bone_fracture(self, image_path: str) -> dict:
         return self.bone_fracture_agent.predict(image_path, self.bone_fracture_output_path)
+
+    # pneumonia detection agent
+    def detect_pneumonia(self, image_path: str) -> dict:
+        return self.pneumonia_agent.predict(image_path)

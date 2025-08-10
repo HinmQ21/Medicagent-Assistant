@@ -64,6 +64,8 @@ class AgentConfig:
     5. CHEST_XRAY_AGENT - For analysis of chest X-ray images to detect abnormalities.
     6. SKIN_LESION_AGENT - For analysis of skin lesion images to classify them as benign or malignant.
     7. BONE_FRACTURE_AGENT - For analysis of X-ray images to detect bone fractures and injuries.
+    8. PNEUMONIA_AGENT - For analysis of chest X-ray images to detect pneumonia (binary classification).
+    
 
     Make your decision based on these guidelines:
     - If the user has not uploaded any image, always route to the conversation agent.
@@ -862,6 +864,34 @@ def create_agent_graph():
                 "needs_human_validation": False,
                 "agent_name": "BONE_FRACTURE_AGENT"
             }
+
+    def run_pneumonia_agent(state: AgentState) -> AgentState:
+        """Handle Pneumonia detection in chest X-ray images."""
+        current_input = state["current_input"]
+        image_path = current_input.get("image", None)
+        print(f"Selected agent: PNEUMONIA_AGENT")
+        if not image_path:
+            response = AIMessage(content="No image was provided for analysis. Please upload a chest X-ray image.")
+            return {**state, "output": response, "needs_human_validation": False, "agent_name": "PNEUMONIA_AGENT"}
+
+        try:
+            result = AgentConfig.image_analyzer.detect_pneumonia(image_path)
+            label = result['predicted_label']
+            confidence = result.get('confidence', 0.0)
+            probs = result['probabilities']
+
+            response_text = (
+                f"Pneumonia Detection Analysis:\n\n"
+                f"- Prediction: {label.title()}\n"
+                f"- Confidence: {confidence*100:.1f}%\n"
+                f"- Probabilities: {', '.join([f'{k}:{probs[k]*100:.1f}%' for k in probs])}\n\n"
+                f"Note: AI-assisted assessment for screening purposes. Please consult a healthcare professional for clinical diagnosis."
+            )
+            response = AIMessage(content=response_text)
+            return {**state, "output": response, "needs_human_validation": True, "agent_name": "PNEUMONIA_AGENT"}
+        except Exception as e:
+            error_response = AIMessage(content=f"Error during pneumonia analysis: {str(e)}")
+            return {**state, "output": error_response, "needs_human_validation": False, "agent_name": "PNEUMONIA_AGENT"}
     
     def handle_human_validation(state: AgentState) -> Dict:
         """Prepare for human validation if needed."""
@@ -973,6 +1003,8 @@ def create_agent_graph():
     workflow.add_node("CHEST_XRAY_AGENT", run_chest_xray_agent)
     workflow.add_node("SKIN_LESION_AGENT", run_skin_lesion_agent)
     workflow.add_node("BONE_FRACTURE_AGENT", run_bone_fracture_agent)
+    workflow.add_node("PNEUMONIA_AGENT", run_pneumonia_agent)
+    
     workflow.add_node("check_validation", handle_human_validation)
     workflow.add_node("human_validation", perform_human_validation)
     workflow.add_node("apply_guardrails", apply_output_guardrails)
@@ -1002,6 +1034,7 @@ def create_agent_graph():
             "CHEST_XRAY_AGENT": "CHEST_XRAY_AGENT",
             "SKIN_LESION_AGENT": "SKIN_LESION_AGENT",
             "BONE_FRACTURE_AGENT": "BONE_FRACTURE_AGENT",
+            "PNEUMONIA_AGENT": "PNEUMONIA_AGENT",
             "needs_validation": "RAG_AGENT"  # Default to RAG if confidence is low
         }
     )
@@ -1015,6 +1048,8 @@ def create_agent_graph():
     workflow.add_edge("CHEST_XRAY_AGENT", "check_validation")
     workflow.add_edge("SKIN_LESION_AGENT", "check_validation")
     workflow.add_edge("BONE_FRACTURE_AGENT", "check_validation")
+    workflow.add_edge("PNEUMONIA_AGENT", "check_validation")
+    
 
     workflow.add_edge("human_validation", "apply_guardrails")
     workflow.add_edge("apply_guardrails", END)
